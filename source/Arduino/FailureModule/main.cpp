@@ -56,5 +56,6 @@ void loop() {
 			p.CutThrottle(enforce);
 		}
 	}
+	p.SendOutputs();
 }
 

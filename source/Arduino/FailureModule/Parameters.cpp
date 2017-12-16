@@ -4,7 +4,7 @@ void Parameters::ReadInputs() {
       // read in APPS1/2, TPS1/2, TPSexp, and BSE
 }
 
-void Parameters::WriteOutputs() {
+void Parameters::SendOutputs() {
       // send APPSave, TPSave to output pins;
 }
 
