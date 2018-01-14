@@ -18,22 +18,19 @@ void setup() {
 
 void loop() {
 	p.ReadInputs();
-      if (p.shiftUp) {
-            s.ShiftUp();
-            give shifter outputs to p;
-      }
-      if (p.shiftDown) {
-            s.ShiftDown();
-            give shifter outputs to p;
-      }
-      p.clutch = s.shifting;
-      if (!p.throttleCut) {
-            p.expTPS = APPSTPSMap::Map(p.APPS);
-      } else if (s.shifting) {
-            p.expTPS = s.RevMatchTPS(p.wheelSpeed)
-      } else {
-            p.expTPS = 0;
-      }
-      p.SendOutputs();
+  if (p.shiftUp) {
+        s.ShiftUp();
+        give shifter outputs to p;
+  }
+  if (p.shiftDown) {
+        s.ShiftDown();
+        give shifter outputs to p;
+  }
+  p.clutch = s.shifting;
+  if (s.shifting) {
+        p.expTPS = s.RevMatchTPS(p.wheelSpeed);
+  } else {
+        p.expTPS = !p.throttleCut * APPSTPSMap::Map(p.APPS);
+  }
+  p.SendOutputs();
 }
-

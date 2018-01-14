@@ -9,7 +9,7 @@ void Parameters::SendOutputs() {
 }
 
 void Parameters::CutThrottle(int enforce) {
-      // do the cut throttle thing
+      // do the cut throttle thing, then
       if enforce {
             {// loop 1 second
                   ReadInputs();

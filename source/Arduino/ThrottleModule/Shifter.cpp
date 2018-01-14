@@ -2,7 +2,7 @@
 
 void Shifter::ShiftUp() {
       if (shifting) {
-            panic();
+            targetGear = targetGear + 1;
       } else {
             shifting = true;
             targetGear = currentGear + 1;
@@ -12,7 +12,7 @@ void Shifter::ShiftUp() {
 
 void Shifter::ShiftDown() {
       if (shifting) {
-            panic();
+            targetGear = targetGear + 1;
       } else {
             shifting = true;
             targetGear = currentGear - 1;
@@ -23,10 +23,10 @@ void Shifter::ShiftDown() {
 double Shifter::RevMatchTPS(double wheelSpeed, double revs) {
       if (shifting) {
             targetRevs = gearRatios[targetGear] * wheelSpeed;
-            if (revs < targetRevs) {
-                  return full throttle;
-            } else if (revs > targetRevs) {
-                  return zero throttle;
+            if (revs < targetRevs) { // within some range
+                  return FULL_THROTTLE;
+            } else if (revs > targetRevs) { // within some range
+                  return NO_THROTTLE;
             } else {
                   shifting = false;
                   return -1;
