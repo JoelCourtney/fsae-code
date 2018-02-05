@@ -1,9 +1,19 @@
 #define ENFORCE_TPSDIFF 1
 #define ENFORCE_BRAKETHROTTLEDIFF 2
 
-#include <function>
+// #include <function> maybe
 
 struct Parameters {
+      bool throttleCut;
+      bool shiftUp;
+      bool shiftDown;
+      
+      double wheelSpeed;
+      double revs;
+      
+      bool? double? clutch;
+      some mess of shifter outputs;
+      
       double APPS1;
       double APPS2;
       double APPSave;

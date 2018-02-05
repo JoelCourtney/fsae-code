@@ -1,8 +1,9 @@
 struct Timer {
       unsigned long start;
+      bool running;
       
       Timer();
       
-      void Restart();
+      void Toggle();
       int GetDuration();
 }

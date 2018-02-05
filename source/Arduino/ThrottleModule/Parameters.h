@@ -2,10 +2,7 @@
 #define CLUTCH_OUT true
 
 struct Parameters {
-private:
-      
 public:
-      double APPS;
       bool throttleCut;
       bool shiftUp;
       bool shiftDown;
@@ -19,4 +16,6 @@ public:
       
       void ReadInputs();
       void SendOutputs();
+      
+      bool Initialize();
 }
