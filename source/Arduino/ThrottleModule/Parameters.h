@@ -14,8 +14,14 @@ public:
       bool? double? clutch;
       some mess of shifter outputs;
       
+      bool Initialize();
+      
       void ReadInputs();
       void SendOutputs();
       
-      bool Initialize();
+      void RPMInt();
+      void wheel1Int();
+      void wheel2Int();
+      void wheel3Int();
+      void wheel4Int();
 }

@@ -13,7 +13,7 @@ Timer timers[6];
 
 void setup() {
 	while (!p.Initialize()) {};
-	while (!s.Initialize(&p)) {};
+	while (!s.Initialize()) {};
 }
 
 void loop() {
