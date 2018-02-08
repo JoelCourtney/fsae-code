@@ -1,5 +1,14 @@
 #include "Shifter.h"
 
+bool Shifter::Initialize() {
+  for(int i = 0; i < 6; i++) {
+    ShiftDown();
+  }
+  ShiftUp(); // trying to get into neutral.
+
+  return true; // will update later to return false on failure.
+}
+
 void Shifter::ShiftUp() {
       if (shifting) {
             targetGear = targetGear + 1;

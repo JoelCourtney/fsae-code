@@ -1,11 +1,46 @@
 #include "Parameters.h"
 
+bool Parameters::Initialize() {
+  pinMode(IN_PADDLEUP, INPUT);
+  pinMode(IN_PADDEDOWN, INPUT);
+  pinMode(IN_RPM, INPUT);
+  for(int i = 0; i < 4; i++)
+    pinMode(IN_WHEELSPEED + i, INPUT);
+
+  pinMode(OUT_SHIFTUP, OUTPUT);
+  pinMode(OUT_SHIFTDOWN, OUTPUT);
+  pinMode(OUT_CLUTCH, OUTPUT);
+  pinMode(OUT_BRAKELIGHT, OUTPUT);
+  pinMode(OUT_THROTTLE, OUTPUT);
+
+  return true; // will update this later to return false on failure
+}
+
 void Parameters::ReadInputs() {
-      // read in APPS1/2, TPS1/2, TPSexp, and BSE
+      TPS1 = analogRead(IN_TPS1);
+      TPS2 = analogRead(IN_TPS2);
+      APPS1 = analogRead(IN_APPS1);
+      APPS2 = analogRead(IN_APPS2);
+      BSE1 = analogRead(IN_BSE1);
+      BSE2 = analogRead(IN_BSE2);
+
+      paddleUp = digitalRead(IN_PADDLEUP);
+      paddleDown = digitalRead(IN_PADDLEDOWN);
+      for(int i = 0; i < 4; i++) {
+        wheelSpeed[i] = digitalRead(IN_WHEELSPEED + i);
+
+        // maybe? probably have to make an interrupt for pwm stuffs.
+      }
+
+      RPM is weird. Because PWM.
 }
 
 void Parameters::SendOutputs() {
-      // send APPSave, TPSave to output pins;
+      analogWrite(OUT_THROTTLE);
+      digitalWrite(OUT_SHIFTUP);
+      digitalWrite(OUT_SHIFTDOWN);
+      digitalWrite(OUT_CLUTCH);
+      digitalWrite(OUT_BRAKELIGHT);
 }
 
 void Parameters::CutThrottle(int enforce) {

@@ -1,23 +1,19 @@
-// Pseudo code for main FailureModule code
-// Module-level inputs: APPS1/2, TPS1/2, BSE, TPSexp
-// Module-level outputs: APPSave, TPSave, throttleCut, ignitionCut
-
-#define TIMER_WIRING 0
-#define TIMER_APPSDIFF 1
-#define TIMER_TPSDIFF 2
-#define TIMER_SIGNALRANGE 3
-#define TIMER_BRAKETHROTTLEDIFF 4
-#define TIMER_EXPTPSDIFF 5
+// LEFT TO DO
+// Fix includes (easy, can be post pdr)
+// figure out PWM inputs / outputs. Interrupts?
+// pin C-16 on the ECU.
 
 #include "Parameters.h"
 #include "BrakeThrottleMap.cpp"
 #include "Timer.h"
 
 Parameters p;
+Shifter s;
 Timer timers[6];
 
 void setup() {
 	while (!p.Initialize()) {};
+	while (!s.Initialize(&p)) {};
 }
 
 void loop() {
@@ -42,7 +38,7 @@ void loop() {
 	if ((p.TPS == p.TPSexp) == timers[TIMER_EXPTPSDIFF].running) {
 		timers[TIMER_EXPTPSDIFF].Toggle();
 	}
-	
+
 	for (int i = 5; i >= 0; i--) {
 		if (timers[i].running && (timers[i].GetDuration() > 100)) {
 			int enforce = 0;
@@ -55,7 +51,7 @@ void loop() {
 			p.CutThrottle(enforce);
 		}
 	}
-      
+
       if (p.shiftUp) {
            s.ShiftUp();
            give shifter outputs to p;
@@ -72,4 +68,3 @@ void loop() {
       }
 	p.SendOutputs();
 }
-
