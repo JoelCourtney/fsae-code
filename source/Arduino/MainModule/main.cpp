@@ -21,7 +21,7 @@ void loop() {
 	if (somehow check wiring?) {
 		timers[TIMER_WIRING].Restart();
 	}
-	if ((p.APPS1 == p.APPS2) == timers[TIMER_APPSDIFF].running) {
+	if (sortaEquals(p.APPS1, p.APPS2) == timers[TIMER_APPSDIFF].running) {
 		timers[TIMER_APPSDIFF].Toggle();
 	}
 	int APPSave = (p.APPS1 + p.APPS2) / 2;

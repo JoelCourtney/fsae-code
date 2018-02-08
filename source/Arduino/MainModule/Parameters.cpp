@@ -28,13 +28,7 @@ void Parameters::ReadInputs() {
 
       paddleUp = digitalRead(IN_PADDLEUP);
       paddleDown = digitalRead(IN_PADDLEDOWN);
-      for(int i = 0; i < 4; i++) {
-        wheelSpeed[i] = digitalRead(IN_WHEELSPEED + i);
 
-        // maybe? probably have to make an interrupt for pwm stuffs.
-      }
-
-      RPM is weird. Because PWM.
 }
 
 void Parameters::SendOutputs() {
