@@ -1,4 +1,6 @@
 struct PWMTracker {
-      int lastPulse;
-      double Pulse();
+      long int lastPulse;
+      int rate;
+
+      void Pulse();
 }

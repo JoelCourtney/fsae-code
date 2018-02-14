@@ -2,6 +2,6 @@
 
 void PWMTracker::Pulse() {
       int hold = millis();
-      rate = hold - lastPulse;
+      period = hold - lastPulse;
       lastPulse = hold;
 }

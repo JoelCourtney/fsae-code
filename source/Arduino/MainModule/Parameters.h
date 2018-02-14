@@ -9,8 +9,8 @@ struct Parameters {
       double APPS1, APPS2;
       double BSE1, BSE2;
       bool paddleUp, paddleDown;
-      pwm_double wheelSpeed[4];
-      pwm_double RPM;
+      PWMTracker wheelSpeed[4];
+      PWMTracker RPM;
 
 // outputs
       double throttle;

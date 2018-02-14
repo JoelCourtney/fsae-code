@@ -16,8 +16,7 @@ void setup() {
 	while (!s.Initialize()) {};
 }
 
-void loop() {
-	p.ReadInputs();
+void checkPlausibility() {
 	if (somehow check wiring?) {
 		timers[TIMER_WIRING].Restart();
 	}
@@ -51,8 +50,10 @@ void loop() {
 			p.CutThrottle(enforce);
 		}
 	}
+}
 
-      if (p.shiftUp) {
+void updateThrottle() {
+			if (p.shiftUp) {
            s.ShiftUp();
            give shifter outputs to p;
       }
@@ -66,5 +67,11 @@ void loop() {
       } else {
            p.expTPS = !p.throttleCut * APPSTPSMap::Map(p.APPS);
       }
+}
+
+void loop() {
+	p.ReadInputs();
+	checkPlausibility();
+	updateThrottle();
 	p.SendOutputs();
 }

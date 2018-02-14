@@ -12,8 +12,11 @@ bool Parameters::Initialize() {
   pinMode(OUT_CLUTCH, OUTPUT);
   pinMode(OUT_BRAKELIGHT, OUTPUT);
   pinMode(OUT_THROTTLE, OUTPUT);
-  
-  attachInterrupt(digitalPinToInterrupt(IN_RPM), RISING)
+
+  for (int i = 0; i < 4; i++) {
+    attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+i), wheelSpeed[i].Pulse, RISING);
+  }
+  attachInterrupt(digitalPinToInterrupt(IN_RPM), RPM.Pulse, RISING);
 
   return true; // will update this later to return false on failure
 }
@@ -61,8 +64,4 @@ void Parameters::CutThrottle(int enforce) {
 
 void Parameters::CutIgnition() {
       // do the thing
-}
-
-void Parameters::RPMInt() {
-      
 }
