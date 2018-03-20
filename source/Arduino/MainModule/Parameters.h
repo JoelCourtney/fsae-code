@@ -1,4 +1,6 @@
-// #include <function> maybe
+#pragma once
+
+#include "PWMTracker.h"
 
 struct Parameters {
 
@@ -25,4 +27,4 @@ struct Parameters {
 
       void CutThrottle(int);
       void CutIgnition();
-}
+};

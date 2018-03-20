@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Timer.h"
+#include <Arduino.h>
 
 Timer::Timer() {
       running = false;

@@ -1,18 +1,20 @@
 // This is gonna be a LOT more complicated than what I have here.
+#pragma once
 
-class Parameters;
+#include "PWMTracker.h"
 
 class Shifter {
-      bool shifting = false;
       int currentGear;
       int targetGear;
 
-      double gearRatios[] = {gear ratios to convert wheelSpeed to revs};
+      double gearRatios[1] = {1};
 public:
+      bool shifting = false;
+
       bool Initialize();
 
       void ShiftUp();
       void ShiftDown();
 
-      double RevMatchTPS(double, double);
-}
+      double RevMatchTPS(PWMTracker*, PWMTracker);
+};

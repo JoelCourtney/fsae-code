@@ -1,3 +1,5 @@
+#pragma once
+
 struct Timer {
       unsigned long start;
       bool running;
@@ -6,4 +8,4 @@ struct Timer {
       
       void Toggle();
       int GetDuration();
-}
+};

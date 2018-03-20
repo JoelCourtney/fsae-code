@@ -1,4 +1,6 @@
-#define ENFORCE_TPSDIFF 1
+#pragma once
+
+#define ENFORCE_EXPTPSDIFF 1
 #define ENFORCE_BRAKETHROTTLEDIFF 2
 
 #define IN_TPS1 A0
@@ -7,15 +9,15 @@
 #define IN_APPS2 A3
 #define IN_BSE1 A4
 #define IN_BSE2 A5
-#define IN_PADDLEUP D0
-#define IN_PADDLEDOWN D1
-#define IN_WHEELSPEED D18
-#define IN_RPM D6
+#define IN_PADDLEUP 0
+#define IN_PADDLEDOWN 1
+#define IN_WHEELSPEED 18
+#define IN_RPM 6
 
-#define OUT_SHIFTUP D2
-#define OUT_SHIFTDOWN D3
-#define OUT_CLUTCH D4
-#define OUT_BRAKELIGHT D5
+#define OUT_SHIFTUP 2
+#define OUT_SHIFTDOWN 3
+#define OUT_CLUTCH 4
+#define OUT_BRAKELIGHT 5
 #define OUT_THROTTLE A6
 
 #define NO_THROTTLE 0

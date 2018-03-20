@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Shifter.h"
+#include "Constants.h"
 
 bool Shifter::Initialize() {
   for(int i = 0; i < 6; i++) {
@@ -29,12 +32,12 @@ void Shifter::ShiftDown() {
       }
 }
 
-double Shifter::RevMatchTPS(double wheelSpeed, double revs) {
+double Shifter::RevMatchTPS(PWMTracker* wheelSpeed, PWMTracker revs) {
       if (shifting) {
-            targetRevs = gearRatios[targetGear] * wheelSpeed;
-            if (revs < targetRevs) { // within some range
+            int targetRevs = gearRatios[targetGear] * wheelSpeed[0].rate;
+            if (revs.rate < targetRevs) { // within some range
                   return FULL_THROTTLE;
-            } else if (revs > targetRevs) { // within some range
+            } else if (revs.rate > targetRevs) { // within some range
                   return NO_THROTTLE;
             } else {
                   shifting = false;

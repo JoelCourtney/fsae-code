@@ -1,8 +1,10 @@
 #include "Parameters.h"
+#include "Constants.h"
+#include <Arduino.h>
 
 bool Parameters::Initialize() {
   pinMode(IN_PADDLEUP, INPUT);
-  pinMode(IN_PADDEDOWN, INPUT);
+  pinMode(IN_PADDLEDOWN, INPUT);
   pinMode(IN_RPM, INPUT);
   for(int i = 0; i < 4; i++)
     pinMode(IN_WHEELSPEED + i, INPUT);
@@ -13,10 +15,11 @@ bool Parameters::Initialize() {
   pinMode(OUT_BRAKELIGHT, OUTPUT);
   pinMode(OUT_THROTTLE, OUTPUT);
 
-  for (int i = 0; i < 4; i++) {
-    attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+i), wheelSpeed[i].Pulse, RISING);
-  }
-  attachInterrupt(digitalPinToInterrupt(IN_RPM), RPM.Pulse, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED), PWMMonitoring::WheelPulse0, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+1), PWMMonitoring::WheelPulse1, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+2), PWMMonitoring::WheelPulse2, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+3), PWMMonitoring::WheelPulse3, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_RPM), PWMMonitoring::RPMPulse, RISING);
 
   return true; // will update this later to return false on failure
 }
@@ -35,25 +38,25 @@ void Parameters::ReadInputs() {
 }
 
 void Parameters::SendOutputs() {
-      analogWrite(OUT_THROTTLE);
-      digitalWrite(OUT_SHIFTUP);
-      digitalWrite(OUT_SHIFTDOWN);
-      digitalWrite(OUT_CLUTCH);
-      digitalWrite(OUT_BRAKELIGHT);
+      analogWrite(OUT_THROTTLE, throttle);
+      digitalWrite(OUT_SHIFTUP, shiftUp);
+      digitalWrite(OUT_SHIFTDOWN, shiftDown);
+      digitalWrite(OUT_CLUTCH, clutch);
+      digitalWrite(OUT_BRAKELIGHT, brakeLight);
 }
 
 void Parameters::CutThrottle(int enforce) {
       // do the cut throttle thing, then
-      if enforce {
+      if (enforce) {
             {// loop 1 second
                   ReadInputs();
-                  if enforce & ENFORCE_TPSDIFF {
-                        if throttle has closed {
+                  if (enforce & ENFORCE_BRAKETHROTTLEDIFF) {
+                        if (TPS1 == 0) {
                               return;
                         }
                   }
-                  if enforce & ENFORCE_BRAKETHROTTLEDIFF {
-                        if TPS matches TPSexp {
+                  if (enforce & ENFORCE_EXPTPSDIFF) {
+                        if (TPS1 == throttle) {
                               return;
                         }
                   }
