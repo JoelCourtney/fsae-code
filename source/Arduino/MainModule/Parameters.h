@@ -4,8 +4,6 @@
 
 struct Parameters {
 
-  // STILL MISSING C-16 on the ECU.
-
 // inputs
       double TPS1, TPS2;
       double APPS1, APPS2;

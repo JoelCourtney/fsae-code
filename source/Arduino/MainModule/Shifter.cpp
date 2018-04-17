@@ -1,14 +1,8 @@
-#pragma once
-
 #include "Shifter.h"
 #include "Constants.h"
 
 bool Shifter::Initialize() {
-  for(int i = 0; i < 6; i++) {
-    ShiftDown();
-  }
-  ShiftUp(); // trying to get into neutral.
-
+  // shift into first?
   return true; // will update later to return false on failure.
 }
 

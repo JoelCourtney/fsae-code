@@ -1,11 +1,6 @@
-// LEFT TO DO
-// Fix includes (easy, can be post pdr)
-// figure out PWM inputs / outputs. Interrupts?
-// pin C-16 on the ECU.
-
 #include "Parameters.h"
-#include "BrakeThrottleMap.cpp"
-#include "APPSTPSMap.cpp"
+#include "BrakeThrottleMap.h"
+#include "APPSTPSMap.h"
 #include "Timer.h"
 #include "Shifter.h"
 #include "Constants.h"
@@ -18,6 +13,7 @@ void setup() {
   millis();
   while (!p.Initialize()) {};
   while (!s.Initialize()) {};
+  Serial.begin(9600);
 }
 
 bool sortaEquals(double a, double b) { return true; }

@@ -1,9 +1,8 @@
 // we might automatically generate this file with a matlab script. it be cool.
-#pragma once
 
 struct BrakeThrottleMap {
-      static double brakeValues[1] = { 1 };
-      static double throttleValues[1] = { 1 };
+      static double brakeValues[1];
+      static double throttleValues[1];
       
       static bool CheckMap(double TPS, double BSE) {
 //            loop through brake array
@@ -17,3 +16,6 @@ struct BrakeThrottleMap {
                   return true;
       }
 };
+
+double BrakeThrottleMap::brakeValues[] = {1};
+double BrakeThrottleMap::throttleValues[] = {1};Gener

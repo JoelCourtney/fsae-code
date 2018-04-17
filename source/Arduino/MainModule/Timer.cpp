@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Timer.h"
 #include <Arduino.h>
 
