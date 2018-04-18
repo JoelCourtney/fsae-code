@@ -18,4 +18,4 @@ struct BrakeThrottleMap {
 };
 
 double BrakeThrottleMap::brakeValues[] = {1};
-double BrakeThrottleMap::throttleValues[] = {1};Gener
+double BrakeThrottleMap::throttleValues[] = {1};
