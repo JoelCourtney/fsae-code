@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TIMER_H
+#define TIMER_H
 
 struct Timer {
       unsigned long start;
@@ -9,3 +10,5 @@ struct Timer {
       void Toggle();
       int GetDuration();
 };
+
+#endif

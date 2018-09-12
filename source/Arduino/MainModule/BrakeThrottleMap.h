@@ -1,4 +1,6 @@
 // we might automatically generate this file with a matlab script. it be cool.
+#ifndef BRAKETHROTTLEMAP_H
+#define BRAKETHROTTLEMAP_H
 
 struct BrakeThrottleMap {
       static double brakeValues[1];
@@ -19,3 +21,5 @@ struct BrakeThrottleMap {
 
 double BrakeThrottleMap::brakeValues[] = {1};
 double BrakeThrottleMap::throttleValues[] = {1};
+
+#endif

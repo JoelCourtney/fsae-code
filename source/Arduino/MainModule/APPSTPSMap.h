@@ -1,4 +1,6 @@
 // we might automatically generate this file with a matlab script. it be cool.
+#ifndef APPSTPSMAP_H
+#define APPSTPSMAP_H
 
 struct APPSTPSMap {
       static double APPSValues[1];
@@ -15,3 +17,5 @@ struct APPSTPSMap {
 
 double APPSTPSMap::APPSValues[] = {1};
 double APPSTPSMap::TPSValues[] = {1};
+
+#endif

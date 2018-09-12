@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PWMTRACKER_H
+#define PWMTRACKER_H
+
 #include <Arduino.h>
 
 struct PWMTracker {
@@ -17,3 +19,5 @@ struct PWMMonitoring {
   static void WheelPulse2();
   static void WheelPulse3();
 };
+
+#endif
