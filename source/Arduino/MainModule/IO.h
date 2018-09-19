@@ -6,7 +6,7 @@
 struct Output {
   double throttle, clutch, shiftUp, shiftDown;
   bool brakeLight;
-  bool Ignition;
+  bool ignition;
 };
 
 struct Input {
@@ -16,6 +16,11 @@ struct Input {
   bool paddleUp, paddleDown;
   PWMTracker wheelSpeed[4];
   PWMTracker RPM;
+
+  double TPSAve();
+  double APPSAve();
+  double BSEAve();
+  double wsAve();
 };
 
 struct IO {

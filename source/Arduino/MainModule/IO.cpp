@@ -69,3 +69,19 @@ void IO::CutThrottle(int enforce) {
 void IO::CutIgnition() {
       // do the thing
 }
+
+double Input::TPSAve() {
+  return (TPS1 + TPS2) / 2;
+}
+
+double Input::APPSAve() {
+  return (APPS1 + APPS2) / 2;
+}
+
+double Input::BSEAve() {
+  return (BSE1 + BSE2) / 2;
+}
+
+double Input::wsAve() {
+  return (TPS1 + TPS2) / 2; // no
+}
