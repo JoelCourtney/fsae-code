@@ -3,6 +3,9 @@
 #include <Arduino.h>
 
 bool IO::Initialize() {
+
+  // This probably needs to be updated for new inputs and outputs
+
   pinMode(IN_PADDLEUP, INPUT);
   pinMode(IN_PADDLEDOWN, INPUT);
   pinMode(IN_RPM, INPUT);
@@ -12,14 +15,13 @@ bool IO::Initialize() {
   pinMode(OUT_SHIFTUP, OUTPUT);
   pinMode(OUT_SHIFTDOWN, OUTPUT);
   pinMode(OUT_CLUTCH, OUTPUT);
-  pinMode(OUT_BRAKELIGHT, OUTPUT);
   pinMode(OUT_THROTTLE, OUTPUT);
 
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED), PWMMonitoring::WheelPulse0, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+1), PWMMonitoring::WheelPulse1, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+2), PWMMonitoring::WheelPulse2, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+3), PWMMonitoring::WheelPulse3, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_RPM), PWMMonitoring::RPMPulse, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED), InterruptMonitoring::WheelPulse0, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+1), InterruptMonitoring::WheelPulse1, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+2), InterruptMonitoring::WheelPulse2, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+3), InterruptMonitoring::WheelPulse3, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_RPM), InterruptMonitoring::RPMPulse, RISING);
 
   return true; // will update this later to return false on failure
 }
@@ -39,35 +41,11 @@ Input IO::ReadInputs() {
 }
 
 void IO::SendOutputs(Output o) {
+      // NEED TO DEAL WITH CUT VARIABLES. THEY ARE CURRENTLY BEING IGNORED
       analogWrite(OUT_THROTTLE, o.throttle);
       digitalWrite(OUT_SHIFTUP, o.shiftUp);
       digitalWrite(OUT_SHIFTDOWN, o.shiftDown);
       digitalWrite(OUT_CLUTCH, o.clutch);
-      digitalWrite(OUT_BRAKELIGHT, o.brakeLight);
-}
-
-void IO::CutThrottle(int enforce) {
-      // do the cut throttle thing, then
-      if (enforce) {
-//            {// loop 1 second
-//                  ReadInputs();
-//                  if (enforce & ENFORCE_BRAKETHROTTLEDIFF) {
-//                        if (TPS1 == 0) {
-//                              return;
-//                        }
-//                  }
-//                  if (enforce & ENFORCE_EXPTPSDIFF) {
-//                        if (inTPS1 == throttle) {
-//                              return;
-//                        }
-//                  }
-//            }
-//            CutIgnition();
-      }
-}
-
-void IO::CutIgnition() {
-      // do the thing
 }
 
 double Input::TPSAve() {
@@ -83,5 +61,5 @@ double Input::BSEAve() {
 }
 
 double Input::wsAve() {
-  return (TPS1 + TPS2) / 2; // no
+  return (TPS1 + TPS2) / 2; // this is a standin. Will average the wheel speed sensors
 }

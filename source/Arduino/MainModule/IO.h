@@ -1,21 +1,22 @@
 #ifndef IO_H
 #define IO_H
 
-#include "PWMTracker.h"
+#include "InterruptTracker.h"
 
+// All information being sent out of PCM
 struct Output {
   double throttle, clutch, shiftUp, shiftDown;
-  bool brakeLight;
-  bool ignition;
+  bool ignitionCut, fuelCut, throttleCut;
 };
 
+// All information being read into PCM
 struct Input {
   double TPS1, TPS2;
   double APPS1, APPS2;
   double BSE1, BSE2;
   bool paddleUp, paddleDown;
-  PWMTracker wheelSpeed[4];
-  PWMTracker RPM;
+  InterruptTracker wheelSpeed[4];
+  InterruptTracker RPM;
 
   double TPSAve();
   double APPSAve();

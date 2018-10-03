@@ -1,9 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define ENFORCE_EXPTPSDIFF 1
-#define ENFORCE_BRAKETHROTTLEDIFF 2
-
+// Labels for input pins
 #define IN_TPS1 A0
 #define IN_TPS2 A1
 #define IN_APPS1 A2
@@ -15,22 +13,24 @@
 #define IN_WHEELSPEED 18
 #define IN_RPM 6
 
+// Labels for output pins
 #define OUT_SHIFTUP 2
 #define OUT_SHIFTDOWN 3
 #define OUT_CLUTCH 4
-#define OUT_BRAKELIGHT 5
 #define OUT_THROTTLE A6
 
 #define NO_THROTTLE 0
 #define FULL_THROTTLE 1
 
-#define TIMER_WIRING 0
-#define TIMER_APPSDIFF 1
-#define TIMER_TPSDIFF 2
-#define TIMER_SIGNALRANGE 3
-#define TIMER_BRAKETHROTTLEDIFF 4
-#define TIMER_EXPTPSDIFF 5
+// labels for plausibility timers
+#define TIMER_APPS_DIFF 0
+#define TIMER_TPS_DIFF 1
+#define TIMER_BSE_DIFF 2
+#define TIMER_BRAKETHROTTLE_DIFF 3
+#define TIMER_EXPTPS_DIFF 4
+#define TIMER_RESOLVE 5
 
+// Constants for pulse widths and heights when shifting
 #define PULSE_SHIFTUP_TIME 1000.
 #define PULSE_SHIFTUP_AMPLITUDE 1.
 #define PULSE_SHIFTDOWN_TIME 1000.
@@ -41,6 +41,7 @@
 
 #define TOP_GEAR 4
 
+// Shift sequence phases
 #define SHIFT_IDLE 0
 #define SHIFT_CLUTCH_RAMPUP 1
 #define SHIFT_SHIFTER_RAMPUP 2

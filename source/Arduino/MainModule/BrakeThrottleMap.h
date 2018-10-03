@@ -1,4 +1,6 @@
+// This will define a simple table relationship between throttle position and allowable brake position, for plausibility checking
 // we might automatically generate this file with a matlab script. it be cool.
+
 #ifndef BRAKETHROTTLEMAP_H
 #define BRAKETHROTTLEMAP_H
 

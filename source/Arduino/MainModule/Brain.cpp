@@ -14,7 +14,7 @@ bool Brain::Initialize() {
   shiftRampUpCompleteTime = 0;
   shiftRampDownCompleteTime = 0;
   shiftState = SHIFT_IDLE;
-  return true; // will update later to return false on failure.
+  return true; // will update later to return false on failure. Cant do that now because we don't yet have a way to know which gear we start in
 }
 
 bool Brain::IsShifting() {
@@ -43,56 +43,85 @@ void Brain::ShiftDown() {
 
 double Brain::RevMatch(Input in) {
   double ws = in.wsAve();
-  return 0.5;
+  return 0.5; // will use gearRatios array later to determine rev match.
 }
 
+// returns true if a and b are within 10% of each other
 inline bool sortaEquals(double a, double b) {
   return (abs(a - b) / ((a + b) / 2)) < 0.1;
 }
 
 Output Brain::Update(Input in) {
-  if (true) { //check wiring
-    timers[TIMER_WIRING].Toggle();
-  }
-  if (sortaEquals(in.APPS1, in.APPS2) == timers[TIMER_APPSDIFF].running) {
-    timers[TIMER_APPSDIFF].Toggle();
-  }
-  int APPSave = (in.APPS1 + in.APPS2) / 2;
-  if ((in.TPS1 == in.TPS2) == timers[TIMER_TPSDIFF].running) {
-    timers[TIMER_TPSDIFF].Toggle();
-  }
-  int TPSave = (in.TPS1 + in.TPS2) / 2;
-  if (true == timers[TIMER_SIGNALRANGE].running) { // operating ranges good
-    timers[TIMER_SIGNALRANGE].Toggle();
-  }
-  if (BrakeThrottleMap::CheckMap(TPSave, in.BSE1) == timers[TIMER_BRAKETHROTTLEDIFF].running) {
-    timers[TIMER_BRAKETHROTTLEDIFF].Toggle();
-  }
-  //  if ((in.TPS1 == in.throttle) == timers[TIMER_EXPTPSDIFF].running) {
-  //    timers[TIMER_EXPTPSDIFF].Toggle();
-  //  } THIS NEEDS TO CHECK AFTER THE THROTTLE HAS BEEN CALCULATED
+  
+  Output out;
 
-  for (int i = 5; i >= 0; i--) {
-    if (timers[i].running && (timers[i].GetDuration() > 100)) {
-      int enforce = 0;
-      if (i == 5) {
-        enforce += ENFORCE_EXPTPSDIFF;
+  // default cut indicators.
+  out.throttleCut = false;
+  out.fuelCut = false;
+  out.ignitionCut = false;
+  
+  /* PLAUSIBILITY CHECKS
+   *  IC.4.4.3: 10% difference in TPS inputs for 100 ms -> shut down throttle
+   *  IC.4.4.7-8: TPS signals outside normal operating range for any amount of time -> shut down throttle
+   *  IC.4.7.1: Brakes actuated + throttle is open for 1 second -> shut down throttle
+   *    1 second allowed to return to idle. Failure -> shut down fuel and ignition
+   *  IC.4.76.2: TPS and expected TPS 10% different for 1 second -> shut down throttle
+   *    1 second allowed for discrepancy to stop. Failure -> shut down fuel and ignition
+   *  IC.4.7.3: All shutdowns must remain in effect until TPS signals are at or below unpowered default for > 1 second
+   *  T.6.2.4: 10% difference in APPS inputs for 100 ms -> shut down throttle
+   *  T.6.2.8-9: APPS signals outside normal operating range for any amount of time -> shut down throttle
+   *  T.6.3.3-4: 10% difference in BSE inputs for 100 ms or BSE signals outside normal operating range for any time -> shut down throttle
+   */
+
+  // Update all timers for plausibility.
+  
+  if (false) { //check wiring. Cannot be filled in until normal operating ranges are known.
+    // operating range failed for any of TPS, APPS, or BSE. shut down throttle
+  }
+  if (sortaEquals(in.APPS1, in.APPS2) == timers[TIMER_APPS_DIFF].running) {
+    timers[TIMER_APPS_DIFF].Toggle();
+  }
+  if (sortaEquals(in.TPS1,in.TPS2) == timers[TIMER_TPS_DIFF].running) {
+    timers[TIMER_TPS_DIFF].Toggle();
+  }
+  if (sortaEquals(in.BSE1,in.BSE2) == timers[TIMER_BSE_DIFF].running) {
+    timers[TIMER_BSE_DIFF].Toggle();
+  }
+  if (BrakeThrottleMap::CheckMap(in.TPSAve(), in.BSE1) == timers[TIMER_BRAKETHROTTLE_DIFF].running) {
+    timers[TIMER_BRAKETHROTTLE_DIFF].Toggle();
+  }
+
+  for (int i = 0; i <= 4; i++) {
+    if (timers[i].running) {
+      int duration = timers[i].GetDuration();
+      if (duration > 1000) {
+        out.fuelCut = true;
+        out.ignitionCut = true;
+        out.throttleCut = true;
+      } else if (duration > 100) {
+        out.throttleCut = true;
       }
-      if (i == 4) {
-        enforce += ENFORCE_BRAKETHROTTLEDIFF;
-      }
-      //      io.CutThrottle(enforce);
-      // FOR THIS WE ACTUALLY SEND THE CUT SIGNAL THROUGH THE NORMAL ROUTE.
     }
   }
 
   // NEED TO ACTUALLY READ PADDLE INPUTS
-  
-  Output out;
+
+  /*
+   * SHIFTING
+   * Consists of four phases:
+   *  1. Ramp up signal on clutch. Clutch is in at the end
+   *  2. Ramp up signal to shift actuator. Shifter is in between gears at end
+   *  3. Ramp down signal to shift actuator. Shifter is at target gear at end
+   *  4. Ramp down signal to clutch. Shift is complete.
+   *  
+   *  Revmatch during 2 and 3.
+   *  Reevaluate target gear at ends of 1 and 3. (in case of multiple inputs)
+   */
+
   if (IsShifting()) {
     switch (shiftState) {
       case SHIFT_IDLE: {
-        // this should never happen. like this is actually impossible
+        // this should never happen. like this is actually impossible. you should probably cry if you ever manage to get here
       }
       case SHIFT_CLUTCH_RAMPUP: { // 1
         long int currentTime = millis();
@@ -200,7 +229,10 @@ Output Brain::Update(Input in) {
     out.shiftUp = 0;
     out.shiftDown = 0;
   }
-  out.brakeLight = in.BSEAve() > 0.1;
-  out.ignition = true;
+
+  if (sortaEquals(in.TPSAve(),out.clutch) == timers[TIMER_EXPTPS_DIFF].running) {
+    timers[TIMER_EXPTPS_DIFF].Toggle();
+  }
+  
   return out;
 }
