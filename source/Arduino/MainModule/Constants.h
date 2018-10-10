@@ -13,6 +13,9 @@
 #define IN_WHEELSPEED 18
 #define IN_RPM 6
 
+// Required time at low (in ms) before accepting a second shift request
+#define PADDLE_DEAD_TIME 100
+
 // Labels for output pins
 #define OUT_SHIFTUP 2
 #define OUT_SHIFTDOWN 3

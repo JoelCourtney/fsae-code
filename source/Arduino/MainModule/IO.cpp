@@ -35,8 +35,24 @@ Input IO::ReadInputs() {
       in.BSE1 = analogRead(IN_BSE1);
       in.BSE2 = analogRead(IN_BSE2);
 
-      in.paddleUp = digitalRead(IN_PADDLEUP);
-      in.paddleDown = digitalRead(IN_PADDLEDOWN);
+      bool up = digitalRead(IN_PADDLEUP);
+      bool down = digitalRead(IN_PADDLEDOWN);
+      in.paddleUp = false;
+      in.paddleDown = false;
+      if (up) {
+        int diff =  millis() - lastPaddleUpHigh;
+        lastPaddleUpHigh = millis();
+        if (diff > PADDLE_DEAD_TIME) {
+          in.paddleUp = true;
+        }
+      }
+      if (down) {
+        int diff =  millis() - lastPaddleDownHigh;
+        lastPaddleDownHigh = millis();
+        if (diff > PADDLE_DEAD_TIME) {
+          in.paddleDown = true;
+        }
+      }
       return in;
 }
 

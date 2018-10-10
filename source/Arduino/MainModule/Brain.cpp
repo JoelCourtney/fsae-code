@@ -1,7 +1,7 @@
 #include "IO.h"
 #include "Constants.h"
 #include "Brain.h"
-#include "BrakeThrottleMap.h"
+#include "BSETPSMap.h"
 #include "APPSTPSMap.h"
 
 bool Brain::Initialize() {
@@ -24,7 +24,7 @@ bool Brain::IsShifting() {
 void Brain::ShiftUp() {
   if (targetGear < TOP_GEAR) {
     targetGear++;
-    if (shiftState == SHIFT_IDLE) {
+    if (targetGear != currentGear && shiftState == SHIFT_IDLE) {
       shiftState = SHIFT_CLUTCH_RAMPUP;
       shiftRequestTime = millis();
     }
@@ -34,7 +34,7 @@ void Brain::ShiftUp() {
 void Brain::ShiftDown() {
   if (targetGear < TOP_GEAR) {
     targetGear++;
-    if (shiftState == SHIFT_IDLE) {
+    if (targetGear != currentGear && shiftState == SHIFT_IDLE) {
       shiftState = SHIFT_CLUTCH_RAMPUP;
       shiftRequestTime = millis();
     }
@@ -87,7 +87,7 @@ Output Brain::Update(Input in) {
   if (sortaEquals(in.BSE1,in.BSE2) == timers[TIMER_BSE_DIFF].running) {
     timers[TIMER_BSE_DIFF].Toggle();
   }
-  if (BrakeThrottleMap::CheckMap(in.TPSAve(), in.BSE1) == timers[TIMER_BRAKETHROTTLE_DIFF].running) {
+  if (BSETPSMap::CheckMap(in.TPSAve(), in.BSE1) == timers[TIMER_BRAKETHROTTLE_DIFF].running) {
     timers[TIMER_BRAKETHROTTLE_DIFF].Toggle();
   }
 
@@ -104,7 +104,12 @@ Output Brain::Update(Input in) {
     }
   }
 
-  // NEED TO ACTUALLY READ PADDLE INPUTS
+  if (in.paddleUp) {
+    ShiftUp();
+  }
+  if (in.paddleDown) {
+    ShiftDown();
+  }
 
   /*
    * SHIFTING

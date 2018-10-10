@@ -25,6 +25,11 @@ struct Input {
 };
 
 struct IO {
+private:
+      long int lastPaddleUpHigh = 0;
+      long int lastPaddleDownHigh = 0;
+
+public:
       bool Initialize();
 
       Input ReadInputs();
