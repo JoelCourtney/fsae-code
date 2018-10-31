@@ -4,6 +4,8 @@
 #include "BSETPSMap.h"
 #include "APPSTPSMap.h"
 
+const double Brain::gearRatios[6] = {2.846, 2.125, 1.632, 1.3, 1.091, 0.964};
+
 bool Brain::Initialize() {
   // shift into first?
   currentGear = 1;
@@ -43,7 +45,12 @@ void Brain::ShiftDown() {
 
 double Brain::RevMatch(Input in) {
   double ws = in.wsAve();
-  return 0.5; // will use gearRatios array later to determine rev match.
+  double wsHypo = in.RPM.rate * (Brain::gearRatios[targetGear-1] * FINAL_DRIVE_RATIO);
+  if (wsHypo < ws) {
+    return 1.0;
+  } else {
+    return 0.0;
+  }
 }
 
 // returns true if a and b are within 10% of each other
@@ -233,6 +240,11 @@ Output Brain::Update(Input in) {
     out.clutch = 0;
     out.shiftUp = 0;
     out.shiftDown = 0;
+  }
+
+  // RevMatching or no, if RPM is redlining we need to limit it
+  if (in.RPM.rate > RPM_RED_LINE) {
+    out.throttle = 0.0;
   }
 
   if (sortaEquals(in.TPSAve(),out.clutch) == timers[TIMER_EXPTPS_DIFF].running) {

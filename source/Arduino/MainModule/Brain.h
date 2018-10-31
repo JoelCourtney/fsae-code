@@ -22,7 +22,7 @@ class Brain {
       Timer timers[6];
 
       // empty for now. Will be used for rev matching
-      static constexpr double gearRatios[1] = {1};
+      static const double gearRatios[];
 
       // for simplicity
       bool IsShifting();
