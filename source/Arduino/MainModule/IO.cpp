@@ -6,21 +6,21 @@ bool IO::Initialize() {
 
   // This probably needs to be updated for new inputs and outputs
 
-  pinMode(IN_PADDLEUP, INPUT);
-  pinMode(IN_PADDLEDOWN, INPUT);
+  pinMode(IN_SHIFTUP_PADDLE, INPUT);
+  pinMode(IN_SHIFTDOWN_PADDLE, INPUT);
   pinMode(IN_RPM, INPUT);
   for(int i = 0; i < 4; i++)
-    pinMode(IN_WHEELSPEED + i, INPUT);
+    pinMode(IN_WHEEL_SPEED + i, INPUT);
 
-  pinMode(OUT_SHIFTUP, OUTPUT);
-  pinMode(OUT_SHIFTDOWN, OUTPUT);
-  pinMode(OUT_CLUTCH, OUTPUT);
+  pinMode(OUT_SHIFTUP_ACTUATOR, OUTPUT);
+  pinMode(OUT_SHIFTDOWN_ACTUATOR, OUTPUT);
+  pinMode(OUT_CLUTCH_ACTUATOR, OUTPUT);
   pinMode(OUT_THROTTLE, OUTPUT);
 
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED), InterruptMonitoring::WheelPulse0, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+1), InterruptMonitoring::WheelPulse1, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+2), InterruptMonitoring::WheelPulse2, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEELSPEED+3), InterruptMonitoring::WheelPulse3, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED), InterruptMonitoring::WheelPulse0, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+1), InterruptMonitoring::WheelPulse1, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+2), InterruptMonitoring::WheelPulse2, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), InterruptMonitoring::WheelPulse3, RISING);
   attachInterrupt(digitalPinToInterrupt(IN_RPM), InterruptMonitoring::RPMPulse, RISING);
 
   return true; // will update this later to return false on failure
@@ -35,8 +35,8 @@ Input IO::ReadInputs() {
       in.BSE1 = analogRead(IN_BSE1);
       in.BSE2 = analogRead(IN_BSE2);
 
-      bool up = digitalRead(IN_PADDLEUP);
-      bool down = digitalRead(IN_PADDLEDOWN);
+      bool up = digitalRead(IN_SHIFTUP_PADDLE);
+      bool down = digitalRead(IN_SHIFTDOWN_PADDLE);
       in.paddleUp = false;
       in.paddleDown = false;
       if (up) {
@@ -59,9 +59,9 @@ Input IO::ReadInputs() {
 void IO::SendOutputs(Output o) {
       // NEED TO DEAL WITH CUT VARIABLES. THEY ARE CURRENTLY BEING IGNORED
       analogWrite(OUT_THROTTLE, o.throttle);
-      digitalWrite(OUT_SHIFTUP, o.shiftUp);
-      digitalWrite(OUT_SHIFTDOWN, o.shiftDown);
-      digitalWrite(OUT_CLUTCH, o.clutch);
+      digitalWrite(OUT_SHIFTUP_ACTUATOR, o.shiftUp);
+      digitalWrite(OUT_SHIFTDOWN_ACTUATOR, o.shiftDown);
+      digitalWrite(OUT_CLUTCH_ACTUATOR, o.clutch);
 }
 
 double Input::TPSAve() {
