@@ -67,4 +67,10 @@
 #define FINAL_DRIVE_RATIO 1.4
 #define RPM_RED_LINE 5000
 
+// Error codes
+#define ERROR_CAN_INITIALIZATION 1
+#define ERROR_SD_INITIALIZATION 2
+#define ERROR_LOG_FILE_NAME_SATURATION 3
+#define ERROR_
+
 #endif

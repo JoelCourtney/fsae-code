@@ -1,21 +1,34 @@
 #include "IO.h"
 #include "Constants.h"
 #include <Arduino.h>
+#include <mcp_can.h>
 
-bool IO::Initialize() {
+unsigned long IO::lastPaddleUpHigh = 0;
+unsigned long IO::lastPaddleDownHigh = 0;
+unsigned long IO::lastLog = 0;
+char IO::logName[12];
+bool IO::canReceived = false;
+PassThrough IO::pass;
 
-  // This probably needs to be updated for new inputs and outputs
+MCP_CAN CAN(COM_CAN_CS);
 
+int IO::Initialize() {
   pinMode(IN_SHIFTUP_PADDLE, INPUT);
   pinMode(IN_SHIFTDOWN_PADDLE, INPUT);
   pinMode(IN_RPM, INPUT);
   for(int i = 0; i < 4; i++)
     pinMode(IN_WHEEL_SPEED + i, INPUT);
+  for(int i = 0; i < 6; i++)
+    pinMode(IN_GEAR_INDICATOR + i, INPUT);
 
   pinMode(OUT_SHIFTUP_ACTUATOR, OUTPUT);
   pinMode(OUT_SHIFTDOWN_ACTUATOR, OUTPUT);
   pinMode(OUT_CLUTCH_ACTUATOR, OUTPUT);
   pinMode(OUT_THROTTLE, OUTPUT);
+  pinMode(OUT_IGNITION_CUT, OUTPUT);
+  pinMode(OUT_FUEL_CUT, OUTPUT);
+  pinMode(OUT_THROTTLE_CUT, OUTPUT);
+  pinMode(OUT_BRAKELIGHT, OUTPUT);
 
   attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED), InterruptMonitoring::WheelPulse0, RISING);
   attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+1), InterruptMonitoring::WheelPulse1, RISING);
@@ -23,7 +36,30 @@ bool IO::Initialize() {
   attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), InterruptMonitoring::WheelPulse3, RISING);
   attachInterrupt(digitalPinToInterrupt(IN_RPM), InterruptMonitoring::RPMPulse, RISING);
 
-  return true; // will update this later to return false on failure
+  if (CAN.begin(CAN_250KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
+  attachInterrupt(digitalPinToInterrupt(COM_INT), IO::CAN_ISR, FALLING); // start interrupt
+  if (!SD.begin(COM_SD_CS)) return ERROR_SD_INITIALIZATION;
+
+  unsigned int logNumber = 0;
+  while (logNumber <= 9999) {
+    sprintf(logName, "log%04d.csv", logNumber++);
+    if (!SD.exists(logName)) {
+      break;
+    }
+  }
+  if (logNumber > 9999) return ERROR_LOG_FILE_NAME_SATURATION;
+  File logFile = SD.open(logName, FILE_WRITE);
+  logFile.println("time,ERROR,APPS,TPS,BSE,wheelSpeed,gear,coolantTemp,intakeTemp,ambientTemp,oilTemp,exhaustTemp,oilPressure,O2,MAF,MAP,knock,fuelPressure");
+  logFile.close();
+
+  return 0;
+}
+
+void IO::CAN_ISR() {
+  canReceived = true;
+  // check CAN ID
+  // use /Powertrain/'External Resources'/PE3_AN400_CAN_Protocol_C.pdf
+  // to partially update pass.
 }
 
 Input IO::ReadInputs() {
@@ -53,6 +89,9 @@ Input IO::ReadInputs() {
           in.paddleDown = true;
         }
       }
+      if (canReceived) {
+        
+      }
       return in;
 }
 
@@ -62,6 +101,19 @@ void IO::SendOutputs(Output o) {
       digitalWrite(OUT_SHIFTUP_ACTUATOR, o.shiftUp);
       digitalWrite(OUT_SHIFTDOWN_ACTUATOR, o.shiftDown);
       digitalWrite(OUT_CLUTCH_ACTUATOR, o.clutch);
+
+      digitalWrite(OUT_IGNITION_CUT, o.ignitionCut);
+      digitalWrite(OUT_FUEL_CUT, o.fuelCut);
+      digitalWrite(OUT_THROTTLE_CUT, o.throttleCut);
+
+      digitalWrite(OUT_BRAKELIGHT, o.brakelight);
+
+      if (millis()-lastLog > 250) {
+        File logFile = SD.open(logName, FILE_WRITE);
+        logFile.println("stuffs");
+        logFile.close();
+        lastLog = millis();
+      }
 }
 
 double Input::TPSAve() {

@@ -1,12 +1,15 @@
 #ifndef IO_H
 #define IO_H
 
+#include <SPI.h>
+#include <SD.h>
 #include "InterruptTracker.h"
+#include "Constants.h"
 
 // All information being sent out of PCM
 struct Output {
   double throttle, clutch, shiftUp, shiftDown;
-  bool ignitionCut, fuelCut, throttleCut;
+  bool ignitionCut, fuelCut, throttleCut, brakelight;
 };
 
 // All information being read into PCM
@@ -16,7 +19,8 @@ struct Input {
   double BSE1, BSE2;
   bool paddleUp, paddleDown;
   InterruptTracker wheelSpeed[4];
-  InterruptTracker RPM;
+  InterruptTracker RPM; // replace with crankSpeed
+  int gear;
 
   double TPSAve();
   double APPSAve();
@@ -24,19 +28,36 @@ struct Input {
   double wsAve();
 };
 
+struct PassThrough {
+  double coolantTemp, intakeTemp, ambientTemp, oilTemp, exhaustTemp;
+  double oilPressure;
+  double Oxy1, Oxy2;
+  double MAF, MAP;
+  double knock;
+  double fuelPressure;
+};
+
 struct IO {
 private:
-      long int lastPaddleUpHigh = 0;
-      long int lastPaddleDownHigh = 0;
+      static unsigned long lastPaddleUpHigh;
+      static unsigned long lastPaddleDownHigh;
+
+      static bool canReceived;
+
+      static PassThrough pass;
+      static unsigned long lastLog;
+      static char logName[12];
 
 public:
-      bool Initialize();
+      static void CAN_ISR();
 
-      Input ReadInputs();
-      void SendOutputs(Output);
+      static int Initialize();
 
-      void CutThrottle(int);
-      void CutIgnition();
+      static Input ReadInputs();
+      static void SendOutputs(Output);
+
+      static void CutThrottle(int);
+      static void CutIgnition();
 };
 
 #endif
