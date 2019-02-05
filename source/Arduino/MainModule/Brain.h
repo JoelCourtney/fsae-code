@@ -3,7 +3,7 @@
 #ifndef BRAIN_H
 #define BRAIN_H
 
-#include "InterruptTracker.h"
+#include "PWMTracker.h"
 #include "Timer.h"
 #include "IO.h"
 

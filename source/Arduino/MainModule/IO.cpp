@@ -30,11 +30,11 @@ int IO::Initialize() {
   pinMode(OUT_THROTTLE_CUT, OUTPUT);
   pinMode(OUT_BRAKELIGHT, OUTPUT);
 
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED), InterruptMonitoring::WheelPulse0, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+1), InterruptMonitoring::WheelPulse1, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+2), InterruptMonitoring::WheelPulse2, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), InterruptMonitoring::WheelPulse3, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_RPM), InterruptMonitoring::RPMPulse, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED), PWMMonitoring::WheelPulse0, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+1), PWMMonitoring::WheelPulse1, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+2), PWMMonitoring::WheelPulse2, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), PWMMonitoring::WheelPulse3, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_RPM), PWMMonitoring::RPMPulse, RISING);
 
   if (CAN.begin(CAN_250KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
   attachInterrupt(digitalPinToInterrupt(COM_INT), IO::CAN_ISR, FALLING); // start interrupt
@@ -92,6 +92,7 @@ Input IO::ReadInputs() {
       if (canReceived) {
         
       }
+      // NEED TO READ GEAR INDICATOR
       return in;
 }
 

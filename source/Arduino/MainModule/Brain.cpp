@@ -34,8 +34,8 @@ void Brain::ShiftUp() {
 }
 
 void Brain::ShiftDown() {
-  if (targetGear < TOP_GEAR) {
-    targetGear++;
+  if (targetGear > 1) {
+    targetGear--;
     if (targetGear != currentGear && shiftState == SHIFT_IDLE) {
       shiftState = SHIFT_CLUTCH_RAMPUP;
       shiftRequestTime = millis();
@@ -247,7 +247,7 @@ Output Brain::Update(Input in) {
     out.throttle = 0.0;
   }
 
-  if (sortaEquals(in.TPSAve(),out.clutch) == timers[TIMER_EXPTPS_DIFF].running) {
+  if (sortaEquals(in.TPSAve(),out.throttle) == timers[TIMER_EXPTPS_DIFF].running) {
     timers[TIMER_EXPTPS_DIFF].Toggle();
   }
   

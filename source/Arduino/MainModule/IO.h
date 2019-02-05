@@ -3,7 +3,7 @@
 
 #include <SPI.h>
 #include <SD.h>
-#include "InterruptTracker.h"
+#include "PWMTracker.h"
 #include "Constants.h"
 
 // All information being sent out of PCM
@@ -18,8 +18,8 @@ struct Input {
   double APPS1, APPS2;
   double BSE1, BSE2;
   bool paddleUp, paddleDown;
-  InterruptTracker wheelSpeed[4];
-  InterruptTracker RPM; // replace with crankSpeed
+  PWMTracker wheelSpeed[4];
+  PWMTracker RPM; // replace with crankSpeed
   int gear;
 
   double TPSAve();
@@ -37,7 +37,7 @@ struct PassThrough {
   double fuelPressure;
 };
 
-struct IO {
+class IO {
 private:
       static unsigned long lastPaddleUpHigh;
       static unsigned long lastPaddleDownHigh;
@@ -56,8 +56,8 @@ public:
       static Input ReadInputs();
       static void SendOutputs(Output);
 
-      static void CutThrottle(int);
-      static void CutIgnition();
+//      static void CutThrottle(int);
+//      static void CutIgnition();
 };
 
 #endif
