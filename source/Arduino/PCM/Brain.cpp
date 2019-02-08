@@ -16,7 +16,7 @@ bool Brain::Initialize() {
   shiftRampUpCompleteTime = 0;
   shiftRampDownCompleteTime = 0;
   shiftState = SHIFT_IDLE;
-  return true; // will update later to return false on failure. Cant do that now because we don't yet have a way to know which gear we start in
+  return true;
 }
 
 bool Brain::IsShifting() {

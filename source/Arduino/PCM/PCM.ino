@@ -12,10 +12,7 @@ void setup() {
   }
   while (!b.Initialize()) {};
   wdt_enable(WDTO_500MS);
-//  Serial.begin(9600);
 }
-
-
 
 void loop() {
   // Simple loop. Reads inputs, processes data, sends outputs.
@@ -30,5 +27,8 @@ void loop() {
 // Effectively the oh shit switch. Watchdog timer failed, something has gone horribly wrong.
 ISR(WDT_vect) {
   // cut power to throttle, ignition, fuel, then hang. Must cycle power completely.
+  digitalWrite(OUT_IGNITION_CUT, true);
+  digitalWrite(OUT_FUEL_CUT, true);
+  digitalWrite(OUT_THROTTLE_CUT, true);
   while(true);
 }

@@ -12,13 +12,16 @@ PassThrough IO::pass;
 
 MCP_CAN CAN(COM_CAN_CS);
 
+void printDirectory(File dir, int numTabs);
+void clearDirectory(File dir);
+
 int IO::Initialize() {
   pinMode(IN_SHIFTUP_PADDLE, INPUT);
   pinMode(IN_SHIFTDOWN_PADDLE, INPUT);
   pinMode(IN_RPM, INPUT);
   for(int i = 0; i < 4; i++)
     pinMode(IN_WHEEL_SPEED + i, INPUT);
-  for(int i = 0; i < 6; i++)
+  for(int i = 1; i <= 6; i++)
     pinMode(IN_GEAR_INDICATOR + i, INPUT);
 
   pinMode(OUT_SHIFTUP_ACTUATOR, OUTPUT);
@@ -36,7 +39,7 @@ int IO::Initialize() {
   attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), PWMMonitoring::WheelPulse3, RISING);
   attachInterrupt(digitalPinToInterrupt(IN_RPM), PWMMonitoring::RPMPulse, RISING);
 
-  if (CAN.begin(CAN_250KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
+  if (CAN.begin(CAN_1000KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
   attachInterrupt(digitalPinToInterrupt(COM_INT), IO::CAN_ISR, FALLING); // start interrupt
   if (!SD.begin(COM_SD_CS)) return ERROR_SD_INITIALIZATION;
 
@@ -51,6 +54,8 @@ int IO::Initialize() {
   File logFile = SD.open(logName, FILE_WRITE);
   logFile.println("time,ERROR,APPS,TPS,BSE,wheelSpeed,gear,coolantTemp,intakeTemp,ambientTemp,oilTemp,exhaustTemp,oilPressure,O2,MAF,MAP,knock,fuelPressure");
   logFile.close();
+
+  Serial.begin(9600);
 
   return 0;
 }
@@ -92,29 +97,65 @@ Input IO::ReadInputs() {
       if (canReceived) {
         
       }
-      // NEED TO READ GEAR INDICATOR
+      if (Serial.available()) {
+        String command = Serial.readString();
+        if (command.equals("status")) {
+          Serial.println("helloo");
+        } else if (command.equals("ls")) {
+          File root = SD.open("/");
+          printDirectory(root, 0);
+        } else if (command.indexOf("dump") == 0) {
+          String file;
+          char buf[17];
+          command.toCharArray(buf,17);
+          sscanf(buf, "dump %s", file);
+          File logFile = SD.open(file);
+          while (logFile.available()) {
+            Serial.write(logFile.read());
+          }
+          logFile.close();
+        } else if (command.equals("rm *")) {
+          File root = SD.open("/");
+          clearDirectory(root);
+        } else if (command.indexOf("rm") == 0) {
+          String file;
+          char buf[15];
+          command.toCharArray(buf,15);
+          sscanf(buf, "dump %s", file);
+          SD.remove(file);
+        }
+      }
+      in.gear = -1;
+      for (int i = 1; i <= 6; i++) {
+        if (digitalRead(IN_GEAR_INDICATOR + i)) {
+          in.gear = i;
+          break;
+        }
+      }
+      if (in.gear == -1) {
+        // something about error ERROR_NO_GEAR_DETECTED
+      }
       return in;
 }
 
 void IO::SendOutputs(Output o) {
-      // NEED TO DEAL WITH CUT VARIABLES. THEY ARE CURRENTLY BEING IGNORED
-      analogWrite(OUT_THROTTLE, o.throttle);
-      digitalWrite(OUT_SHIFTUP_ACTUATOR, o.shiftUp);
-      digitalWrite(OUT_SHIFTDOWN_ACTUATOR, o.shiftDown);
-      digitalWrite(OUT_CLUTCH_ACTUATOR, o.clutch);
+  analogWrite(OUT_THROTTLE, o.throttle);
+  digitalWrite(OUT_SHIFTUP_ACTUATOR, o.shiftUp);
+  digitalWrite(OUT_SHIFTDOWN_ACTUATOR, o.shiftDown);
+  digitalWrite(OUT_CLUTCH_ACTUATOR, o.clutch);
 
-      digitalWrite(OUT_IGNITION_CUT, o.ignitionCut);
-      digitalWrite(OUT_FUEL_CUT, o.fuelCut);
-      digitalWrite(OUT_THROTTLE_CUT, o.throttleCut);
+  digitalWrite(OUT_IGNITION_CUT, o.ignitionCut);
+  digitalWrite(OUT_FUEL_CUT, o.fuelCut);
+  digitalWrite(OUT_THROTTLE_CUT, o.throttleCut);
 
-      digitalWrite(OUT_BRAKELIGHT, o.brakelight);
+  digitalWrite(OUT_BRAKELIGHT, o.brakelight);
 
-      if (millis()-lastLog > 250) {
-        File logFile = SD.open(logName, FILE_WRITE);
-        logFile.println("stuffs");
-        logFile.close();
-        lastLog = millis();
-      }
+  if (millis()-lastLog > 250) {
+    File logFile = SD.open(logName, FILE_WRITE);
+    logFile.println("stuffs");
+    logFile.close();
+    lastLog = millis();
+  }
 }
 
 double Input::TPSAve() {
@@ -131,4 +172,42 @@ double Input::BSEAve() {
 
 double Input::wsAve() {
   return (TPS1 + TPS2) / 2; // this is a standin. Will average the wheel speed sensors
+  // We might not have wheelSpeed at all, so this is just placeholder
+}
+
+void printDirectory(File dir, int numTabs) {
+  while (true) {
+
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
+}
+
+void clearDirectory(File dir) {
+  while (true) {
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
+    }
+    String name = entry.name();
+    entry.close();
+    SD.remove(name);
+  }
 }
