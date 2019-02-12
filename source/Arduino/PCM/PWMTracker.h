@@ -7,7 +7,7 @@
 
 struct PWMTracker {
       long int lastPulse = millis();
-      double rate;
+      double rate = 0;
 };
 
 struct PWMMonitoring {

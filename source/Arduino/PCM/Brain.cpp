@@ -59,6 +59,18 @@ inline bool sortaEquals(double a, double b) {
 }
 
 Output Brain::Update(Input in) {
+//  Serial.println("Tick:");
+//  Serial.println(in.TPS1);
+//  Serial.println(in.TPS2);
+//  Serial.println(in.APPS1);
+//  Serial.println(in.APPS2);
+//  Serial.println(in.BSE1);
+//  Serial.println(in.BSE2);
+//  Serial.println(in.paddleUp);
+//  Serial.println(in.paddleDown);
+  if (in.paddleUp) Serial.println("Up: " + String(millis()));
+  if (in.paddleDown) Serial.println("Down: " + String(millis()));
+//  Serial.println("");
   
   Output out;
 
@@ -102,6 +114,7 @@ Output Brain::Update(Input in) {
     if (timers[i].running) {
       int duration = timers[i].GetDuration();
       if (duration > 1000) {
+        Serial.println("timer " + String(i) + " failed");
         out.fuelCut = true;
         out.ignitionCut = true;
         out.throttleCut = true;

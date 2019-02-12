@@ -7,8 +7,11 @@ Brain b;
 void setup() {
   // Initialize everything.
   wdt_disable();
-  if (IO::Initialize()) {
-    
+  int res = IO::Initialize();
+  if (res == ERROR_CAN_INITIALIZATION) {
+    Serial.println("can failed");
+  } else if (res == ERROR_SD_INITIALIZATION) {
+    Serial.println("sd failed");
   }
   while (!b.Initialize()) {};
   wdt_enable(WDTO_500MS);

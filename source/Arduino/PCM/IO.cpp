@@ -39,23 +39,24 @@ int IO::Initialize() {
   attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), PWMMonitoring::WheelPulse3, RISING);
   attachInterrupt(digitalPinToInterrupt(IN_RPM), PWMMonitoring::RPMPulse, RISING);
 
-  if (CAN.begin(CAN_1000KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
+//  if (CAN.begin(CAN_1000KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
   attachInterrupt(digitalPinToInterrupt(COM_INT), IO::CAN_ISR, FALLING); // start interrupt
-  if (!SD.begin(COM_SD_CS)) return ERROR_SD_INITIALIZATION;
+//  if (!SD.begin(COM_SD_CS)) return ERROR_SD_INITIALIZATION;
+//
+//  unsigned int logNumber = 0;
+//  while (logNumber <= 9999) {
+//    sprintf(logName, "log%04d.csv", logNumber++);
+//    if (!SD.exists(logName)) {
+//      break;
+//    }
+//  }
+//  if (logNumber > 9999) return ERROR_LOG_FILE_NAME_SATURATION;
+//  File logFile = SD.open(logName, FILE_WRITE);
+//  logFile.println("time,ERROR,APPS,TPS,BSE,wheelSpeed,gear,coolantTemp,intakeTemp,ambientTemp,oilTemp,exhaustTemp,oilPressure,O2,MAF,MAP,knock,fuelPressure");
+//  logFile.close();
 
-  unsigned int logNumber = 0;
-  while (logNumber <= 9999) {
-    sprintf(logName, "log%04d.csv", logNumber++);
-    if (!SD.exists(logName)) {
-      break;
-    }
-  }
-  if (logNumber > 9999) return ERROR_LOG_FILE_NAME_SATURATION;
-  File logFile = SD.open(logName, FILE_WRITE);
-  logFile.println("time,ERROR,APPS,TPS,BSE,wheelSpeed,gear,coolantTemp,intakeTemp,ambientTemp,oilTemp,exhaustTemp,oilPressure,O2,MAF,MAP,knock,fuelPressure");
-  logFile.close();
-
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.println("why");
 
   return 0;
 }
@@ -82,6 +83,7 @@ Input IO::ReadInputs() {
       in.paddleDown = false;
       if (up) {
         int diff =  millis() - lastPaddleUpHigh;
+//        Serial.println(diff);
         lastPaddleUpHigh = millis();
         if (diff > PADDLE_DEAD_TIME) {
           in.paddleUp = true;
