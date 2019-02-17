@@ -69,7 +69,11 @@ Output Brain::Update(Input in) {
 //  Serial.println(in.paddleUp);
 //  Serial.println(in.paddleDown);
   if (in.paddleUp) Serial.println("Up: " + String(millis()));
-  if (in.paddleDown) Serial.println("Down: " + String(millis()));
+  if (in.paddleDown) {
+    Serial.println("Down: " + String(millis()));
+    Serial.println("Final Drive: " + String(in.finalDrive.rate));
+  }
+  
 //  Serial.println("");
   
   Output out;
@@ -258,10 +262,11 @@ Output Brain::Update(Input in) {
   // RevMatching or no, if RPM is redlining we need to limit it
   if (in.RPM.rate > RPM_RED_LINE) {
     out.throttle = 0.0;
+    Serial.println("hi");
   }
 
   if (sortaEquals(in.TPSAve(),out.throttle) == timers[TIMER_EXPTPS_DIFF].running) {
-    timers[TIMER_EXPTPS_DIFF].Toggle();
+//    timers[TIMER_EXPTPS_DIFF].Toggle();
   }
   
   return out;

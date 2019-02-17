@@ -8,19 +8,19 @@
 
 // All information being sent out of PCM
 struct Output {
-  double throttle, clutch, shiftUp, shiftDown;
-  bool ignitionCut, fuelCut, throttleCut, brakelight;
+  double throttle = 0, clutch = 0, shiftUp = 0, shiftDown = 0;
+  bool ignitionCut = false, fuelCut = false, throttleCut = false, brakelight = false;
 };
 
 // All information being read into PCM
 struct Input {
-  double TPS1, TPS2;
-  double APPS1, APPS2;
-  double BSE1, BSE2;
-  bool paddleUp, paddleDown;
-  PWMTracker wheelSpeed[4];
-  PWMTracker RPM; // replace with crankSpeed
-  int gear;
+  double TPS1 = 0, TPS2 = 0;
+  double APPS1 = 0, APPS2 = 0;
+  double BSE1 = 0, BSE2 = 0;
+  bool paddleUp = false, paddleDown = false;
+  PWMTracker finalDrive;
+  PWMTracker RPM;
+  int gear = -1;
 
   double TPSAve();
   double APPSAve();
@@ -29,12 +29,12 @@ struct Input {
 };
 
 struct PassThrough {
-  double coolantTemp, intakeTemp, ambientTemp, oilTemp, exhaustTemp;
-  double oilPressure;
-  double Oxy1, Oxy2;
-  double MAF, MAP;
-  double knock;
-  double fuelPressure;
+  double coolantTemp = 0, intakeTemp = 0, ambientTemp = 0, oilTemp = 0, exhaustTemp = 0;
+  double oilPressure = 0;
+  double Oxy1 = 0, Oxy2 = 0;
+  double MAF = 0, MAP = 0;
+  double knock = 0;
+  double fuelPressure = 0;
 };
 
 class IO {

@@ -11,7 +11,7 @@
 #define IN_SHIFTUP_PADDLE 8
 #define IN_SHIFTDOWN_PADDLE 9
 #define IN_GEAR_INDICATOR 21
-#define IN_WHEEL_SPEED 18
+#define IN_FINAL_DRIVE 18
 #define IN_RPM 3
 
 // Labels for output pins

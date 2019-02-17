@@ -19,8 +19,7 @@ int IO::Initialize() {
   pinMode(IN_SHIFTUP_PADDLE, INPUT);
   pinMode(IN_SHIFTDOWN_PADDLE, INPUT);
   pinMode(IN_RPM, INPUT);
-  for(int i = 0; i < 4; i++)
-    pinMode(IN_WHEEL_SPEED + i, INPUT);
+  pinMode(IN_FINAL_DRIVE, INPUT);
   for(int i = 1; i <= 6; i++)
     pinMode(IN_GEAR_INDICATOR + i, INPUT);
 
@@ -33,10 +32,7 @@ int IO::Initialize() {
   pinMode(OUT_THROTTLE_CUT, OUTPUT);
   pinMode(OUT_BRAKELIGHT, OUTPUT);
 
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED), PWMMonitoring::WheelPulse0, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+1), PWMMonitoring::WheelPulse1, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+2), PWMMonitoring::WheelPulse2, RISING);
-  attachInterrupt(digitalPinToInterrupt(IN_WHEEL_SPEED+3), PWMMonitoring::WheelPulse3, RISING);
+  attachInterrupt(digitalPinToInterrupt(IN_FINAL_DRIVE), PWMMonitoring::finalDrivePulse, RISING);
   attachInterrupt(digitalPinToInterrupt(IN_RPM), PWMMonitoring::RPMPulse, RISING);
 
 //  if (CAN.begin(CAN_1000KBPS) != CAN_OK) return ERROR_CAN_INITIALIZATION;
@@ -137,6 +133,7 @@ Input IO::ReadInputs() {
       if (in.gear == -1) {
         // something about error ERROR_NO_GEAR_DETECTED
       }
+      in.finalDrive = PWMMonitoring::finalDrive;
       return in;
 }
 

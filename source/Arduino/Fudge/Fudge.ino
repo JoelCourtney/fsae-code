@@ -5,6 +5,8 @@ int upLast = 0;
 bool down = false;
 int downLast = 0;
 int gear = 1;
+bool finalDrive = false;
+int driveLast = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -18,6 +20,7 @@ void setup() {
   pinMode(OUT_SHIFTDOWN_PADDLE, OUTPUT);
   for(int i = 1; i <= 6; i++)
     pinMode(OUT_GEAR_INDICATOR + i, OUTPUT);
+  pinMode(OUT_FINAL_DRIVE, OUTPUT);
   Serial.begin(115200);
 }
 
@@ -26,11 +29,15 @@ void loop() {
   if (t - upLast > 2500) {
     up = !up;
     upLast = t;
-    gear = (gear + 1) % 6
+    gear = gear % 6 + 1;
   }
   if (t - downLast > 100) {
     down = !down;
     downLast = t;
+  }
+  if (t - driveLast >= 20) {
+    finalDrive = !finalDrive;
+    driveLast = t;
   }
 //  if (up) Serial.println(millis());
   // put your main code here, to run repeatedly:
@@ -42,4 +49,8 @@ void loop() {
   analogWrite(OUT_BSE2,millis() % 256);
   digitalWrite(OUT_SHIFTUP_PADDLE, up);
   digitalWrite(OUT_SHIFTDOWN_PADDLE, down);
+  digitalWrite(OUT_FINAL_DRIVE, finalDrive);
+  Serial.println(finalDrive);
+  for(int i = 1; i <= 6; i++)
+    digitalWrite(OUT_GEAR_INDICATOR + i, i == gear);
 }

@@ -12,14 +12,11 @@ struct PWMTracker {
 
 struct PWMMonitoring {
   static PWMTracker RPM;
-  static PWMTracker wheelSpeed[4];
+  static PWMTracker finalDrive;
 
   // Individual methods for PWM handlers.  
   static void RPMPulse();
-  static void WheelPulse0();
-  static void WheelPulse1();
-  static void WheelPulse2();
-  static void WheelPulse3();
+  static void finalDrivePulse();
 };
 
 #endif
