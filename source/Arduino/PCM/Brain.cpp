@@ -7,7 +7,6 @@
 const double Brain::gearRatios[6] = {2.846, 2.125, 1.632, 1.3, 1.091, 0.964};
 
 bool Brain::Initialize() {
-  // shift into first?
   currentGear = 1;
   targetGear = 1;
   intermediateGear = 1;
@@ -60,7 +59,7 @@ inline bool sortaEquals(double a, double b) {
 
 Output Brain::Update(Input in) {
 //  Serial.println("Tick:");
-//  Serial.println(in.TPS1);
+//  Serial.println(in.TPS2);
 //  Serial.println(in.TPS2);
 //  Serial.println(in.APPS1);
 //  Serial.println(in.APPS2);

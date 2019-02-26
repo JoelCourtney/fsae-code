@@ -14,4 +14,6 @@
 
 #define OUT_GEAR_INDICATOR 25
 
+#define IN_THROTTLE A5
+
 #endif

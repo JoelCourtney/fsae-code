@@ -41,16 +41,16 @@ void loop() {
   }
 //  if (up) Serial.println(millis());
   // put your main code here, to run repeatedly:
-  analogWrite(OUT_TPS1,millis() % 256);
-  analogWrite(OUT_TPS2,millis() % 256);
-  analogWrite(OUT_APPS1,millis() % 256);
-  analogWrite(OUT_APPS2,millis() % 256);
-  analogWrite(OUT_BSE1,millis() % 256);
-  analogWrite(OUT_BSE2,millis() % 256);
+  analogWrite(OUT_TPS1,t % 256);
+  analogWrite(OUT_TPS2,(t) % 256);
+  analogWrite(OUT_APPS1,(t+128) % 256);
+  analogWrite(OUT_APPS2,(t+128) % 256);
+  analogWrite(OUT_BSE1,t % 256);
+  analogWrite(OUT_BSE2,t % 256);
   digitalWrite(OUT_SHIFTUP_PADDLE, up);
   digitalWrite(OUT_SHIFTDOWN_PADDLE, down);
   digitalWrite(OUT_FINAL_DRIVE, finalDrive);
-  Serial.println(finalDrive);
   for(int i = 1; i <= 6; i++)
     digitalWrite(OUT_GEAR_INDICATOR + i, i == gear);
+  if (millis() % 5 == 0) Serial.println(analogRead(IN_THROTTLE));
 }
