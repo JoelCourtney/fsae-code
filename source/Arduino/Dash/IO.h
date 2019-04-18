@@ -3,10 +3,15 @@
 
 #include <SPI.h>
 #include <SD.h>
+#include <LiquidCrystal.h>
+#include "Constants.h"
 
 // All information being sent out of PCM
 struct Output {
   bool shiftUp, shiftDown;
+  double RPM;
+  double oilTemp, oilPressure;
+  unsigned int seg;
 };
 
 // All information being read into PCM
@@ -16,16 +21,18 @@ struct Input {
 
 class IO {
 private:
+      static int plexIndex;
+      
       static unsigned long lastPaddleUpHigh;
       static unsigned long lastPaddleDownHigh;
-
-      static bool canReceived;
 
       static unsigned long lastLog;
       static char logName[12];
 
+      static LiquidCrystal lcd;
+
+      static void SendCANChar(char, unsigned long);
 public:
-      static void CAN_ISR();
 
       static int Initialize();
 

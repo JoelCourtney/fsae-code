@@ -1,20 +1,13 @@
 #include "IO.h"
 #include "Constants.h"
 #include "Brain.h"
-#include "BSETPSMap.h"
 #include "APPSTPSMap.h"
 
 const double Brain::gearRatios[6] = {2.846, 2.125, 1.632, 1.3, 1.091, 0.964};
 
 bool Brain::Initialize() {
-  currentGear = 1;
   targetGear = 1;
-  intermediateGear = 1;
-  shiftRequestTime = 0;
-  clutchRampUpCompleteTime = 0;
-  shiftRampUpCompleteTime = 0;
-  shiftRampDownCompleteTime = 0;
-  shiftState = SHIFT_IDLE;
+  finalGear = 1;
   return true;
 }
 
@@ -23,29 +16,20 @@ bool Brain::IsShifting() {
 }
 
 void Brain::ShiftUp() {
-  if (targetGear < TOP_GEAR) {
-    targetGear++;
-    if (targetGear != currentGear && shiftState == SHIFT_IDLE) {
-      shiftState = SHIFT_CLUTCH_RAMPUP;
-      shiftRequestTime = millis();
-    }
+  if (finalGear < TOP_GEAR) {
+    finalGear++;
   }
 }
 
 void Brain::ShiftDown() {
-  if (targetGear > 1) {
-    targetGear--;
-    if (targetGear != currentGear && shiftState == SHIFT_IDLE) {
-      shiftState = SHIFT_CLUTCH_RAMPUP;
-      shiftRequestTime = millis();
-    }
+  if (finalGear > 1) {
+    finalGear--;
   }
 }
 
 double Brain::RevMatch(Input in) {
-  double ws = in.wsAve();
-  double wsHypo = in.RPM.rate * (Brain::gearRatios[targetGear-1] * FINAL_DRIVE_RATIO);
-  if (wsHypo < ws) {
+  double fdHypo = in.RPM.rate * (Brain::gearRatios[finalGear - 1] * FINAL_DRIVE_RATIO);
+  if (fdHypo < in.finalDrive.rate) {
     return 1.0;
   } else {
     return 0.0;
@@ -58,59 +42,68 @@ inline bool sortaEquals(double a, double b) {
 }
 
 Output Brain::Update(Input in) {
-//  Serial.println("Tick:");
-//  Serial.println(in.TPS2);
-//  Serial.println(in.TPS2);
-//  Serial.println(in.APPS1);
-//  Serial.println(in.APPS2);
-//  Serial.println(in.BSE1);
-//  Serial.println(in.BSE2);
-//  Serial.println(in.paddleUp);
-//  Serial.println(in.paddleDown);
-  if (in.paddleUp) Serial.println("Up: " + String(millis()));
-  if (in.paddleDown) {
-    Serial.println("Down: " + String(millis()));
-    Serial.println("Final Drive: " + String(in.finalDrive.rate));
-  }
-  
-//  Serial.println("");
-  
-  Output out;
+  //  Serial.println("Tick:");
+  //  Serial.println(in.TPS2);
+  //  Serial.println(in.TPS2);
+  //  Serial.println(in.APPS1);
+  //  Serial.println(in.APPS2);
+  //  Serial.println(in.BSE1);
+  //  Serial.println(in.BSE2);
+  //  Serial.println(in.paddleUp);
+  //  Serial.println(in.paddleDown);
+//  if (in.paddleUp) Serial.println("Up: " + String(millis()));
+//  if (in.paddleDown) {
+//    Serial.println("Down: " + String(millis()));
+//    Serial.println("Final Drive: " + String(in.finalDrive.rate));
+//  }
 
+  //  Serial.println("");
+
+  Output out;
   // default cut indicators.
   out.throttleCut = false;
   out.fuelCut = false;
   out.ignitionCut = false;
-  
-  /* PLAUSIBILITY CHECKS
-   *  IC.4.4.3: 10% difference in TPS inputs for 100 ms -> shut down throttle
-   *  IC.4.4.7-8: TPS signals outside normal operating range for any amount of time -> shut down throttle
-   *  IC.4.7.1: Brakes actuated + throttle is open for 1 second -> shut down throttle
-   *    1 second allowed to return to idle. Failure -> shut down fuel and ignition
-   *  IC.4.76.2: TPS and expected TPS 10% different for 1 second -> shut down throttle
-   *    1 second allowed for discrepancy to stop. Failure -> shut down fuel and ignition
-   *  IC.4.7.3: All shutdowns must remain in effect until TPS signals are at or below unpowered default for > 1 second
-   *  T.6.2.4: 10% difference in APPS inputs for 100 ms -> shut down throttle
-   *  T.6.2.8-9: APPS signals outside normal operating range for any amount of time -> shut down throttle
-   *  T.6.3.3-4: 10% difference in BSE inputs for 100 ms or BSE signals outside normal operating range for any time -> shut down throttle
-   */
+
+  ShiftAndThrottle(in,out);
+  CheckPlausibility(in,out);
+
+  return out;
+}
+
+void Brain::CheckPlausibility(Input in, Output& out) {
+   /* PLAUSIBILITY CHECKS
+      IC.4.4.3: 10% difference in TPS inputs for 100 ms -> shut down throttle
+      IC.4.4.7-8: TPS signals outside normal operating range for any amount of time -> shut down throttle
+      IC.4.7.1: Brakes actuated + throttle is open for 1 second -> shut down throttle
+        1 second allowed to return to idle. Failure -> shut down fuel and ignition
+      IC.4.76.2: TPS and expected TPS 10% different for 1 second -> shut down throttle
+        1 second allowed for discrepancy to stop. Failure -> shut down fuel and ignition
+      IC.4.7.3: All shutdowns must remain in effect until TPS signals are at or below unpowered default for > 1 second
+      T.6.2.4: 10% difference in APPS inputs for 100 ms -> shut down throttle
+      T.6.2.8-9: APPS signals outside normal operating range for any amount of time -> shut down throttle
+      T.6.3.3-4: 10% difference in BSE inputs for 100 ms or BSE signals outside normal operating range for any time -> shut down throttle
+  */
 
   // Update all timers for plausibility.
-  
+
   if (false) { //check wiring. Cannot be filled in until normal operating ranges are known.
     // operating range failed for any of TPS, APPS, or BSE. shut down throttle
   }
   if (sortaEquals(in.APPS1, in.APPS2) == timers[TIMER_APPS_DIFF].running) {
     timers[TIMER_APPS_DIFF].Toggle();
   }
-  if (sortaEquals(in.TPS1,in.TPS2) == timers[TIMER_TPS_DIFF].running) {
+  if (sortaEquals(in.TPS1, in.TPS2) == timers[TIMER_TPS_DIFF].running) {
     timers[TIMER_TPS_DIFF].Toggle();
   }
-  if (sortaEquals(in.BSE1,in.BSE2) == timers[TIMER_BSE_DIFF].running) {
+  if (sortaEquals(in.BSE1, in.BSE2) == timers[TIMER_BSE_DIFF].running) {
     timers[TIMER_BSE_DIFF].Toggle();
   }
-  if (BSETPSMap::CheckMap(in.TPSAve(), in.BSE1) == timers[TIMER_BRAKETHROTTLE_DIFF].running) {
+  if ((in.BSEAve() < 0.15 || in.TPSAve() < 0.15) == timers[TIMER_BRAKETHROTTLE_DIFF].running) {
     timers[TIMER_BRAKETHROTTLE_DIFF].Toggle();
+  }
+  if (sortaEquals(in.TPSAve(), out.throttle) == timers[TIMER_EXPTPS_DIFF].running) {
+    timers[TIMER_EXPTPS_DIFF].Toggle();
   }
 
   for (int i = 0; i <= 4; i++) {
@@ -126,7 +119,9 @@ Output Brain::Update(Input in) {
       }
     }
   }
+}
 
+void Brain::ShiftAndThrottle(Input in, Output& out) {
   if (in.paddleUp) {
     ShiftUp();
   }
@@ -134,139 +129,46 @@ Output Brain::Update(Input in) {
     ShiftDown();
   }
 
-  /*
-   * SHIFTING
-   * Consists of four phases:
-   *  1. Ramp up signal on clutch. Clutch is in at the end
-   *  2. Ramp up signal to shift actuator. Shifter is in between gears at end
-   *  3. Ramp down signal to shift actuator. Shifter is at target gear at end
-   *  4. Ramp down signal to clutch. Shift is complete.
-   *  
-   *  Revmatch during 2 and 3.
-   *  Reevaluate target gear at ends of 1 and 3. (in case of multiple inputs)
-   */
-
-  if (IsShifting()) {
-    switch (shiftState) {
-      case SHIFT_IDLE: {
-        // this should never happen. like this is actually impossible. you should probably cry if you ever manage to get here
-      }
-      case SHIFT_CLUTCH_RAMPUP: { // 1
-        long int currentTime = millis();
-        if (currentTime - shiftRequestTime > PULSE_CLUTCHOUT_TIME) {
-          out.clutch = (currentTime - shiftRequestTime) * PULSE_CLUTCH_AMPLITUDE / PULSE_CLUTCHOUT_TIME;
-          out.shiftUp = 0;
-          out.shiftDown = 0;
-          out.throttle = APPSTPSMap::Map(in.TPSAve());
-        } else {
-          if (targetGear != currentGear) {
-            clutchRampUpCompleteTime = currentTime;
-            int diff = targetGear - currentGear;
-            intermediateGear = targetGear + (diff > 0) - (diff < 0);
-            shiftState = SHIFT_SHIFTER_RAMPUP;
-          } else {
-            shiftRampDownCompleteTime = currentTime;
-            shiftState = SHIFT_CLUTCH_RAMPDOWN;
-          }
-        }
-      }
-      case SHIFT_SHIFTER_RAMPUP: { // 2
-        long int currentTime = millis();
-        if (intermediateGear > currentGear) {
-          if (currentTime - clutchRampUpCompleteTime > PULSE_SHIFTUP_TIME) {
-            out.clutch = PULSE_CLUTCH_AMPLITUDE;
-            out.shiftUp = (currentTime - clutchRampUpCompleteTime) * PULSE_SHIFTUP_AMPLITUDE / PULSE_SHIFTUP_TIME;
-            out.shiftDown = 0;
-            out.throttle = RevMatch(in);
-          } else {
-            shiftRampUpCompleteTime = currentTime;
-            shiftState = SHIFT_SHIFTER_RAMPDOWN;
-          }
-        } else {
-          if (currentTime - clutchRampUpCompleteTime > PULSE_SHIFTDOWN_TIME) {
-            out.clutch = PULSE_CLUTCH_AMPLITUDE;
-            out.shiftUp = 0;
-            out.shiftDown = (currentTime - clutchRampUpCompleteTime) * PULSE_SHIFTDOWN_AMPLITUDE / PULSE_SHIFTDOWN_TIME;
-            out.throttle = RevMatch(in);
-          } else {
-            shiftRampUpCompleteTime = currentTime;
-            shiftState = SHIFT_SHIFTER_RAMPDOWN;
-          }
-        }
-      }
-      case SHIFT_SHIFTER_RAMPDOWN: { // 3
-        long int currentTime = millis();
-        if (intermediateGear > currentGear) {
-          if (currentTime - shiftRampUpCompleteTime > PULSE_SHIFTUP_TIME) {
-            out.clutch = PULSE_CLUTCH_AMPLITUDE;
-            out.shiftUp = PULSE_SHIFTUP_AMPLITUDE - ((currentTime - shiftRampUpCompleteTime) * PULSE_SHIFTUP_AMPLITUDE / PULSE_SHIFTUP_TIME);
-            out.shiftDown = 0;
-            out.throttle = RevMatch(in);
-          } else {
-            currentGear = intermediateGear;
-            if (targetGear != currentGear) {
-              clutchRampUpCompleteTime = currentTime;
-              int diff = targetGear - currentGear;
-              intermediateGear = targetGear + (diff > 0) - (diff < 0);
-              shiftState = SHIFT_SHIFTER_RAMPUP;
-            } else {
-              shiftRampDownCompleteTime = currentTime;
-              shiftState = SHIFT_CLUTCH_RAMPDOWN;
-            }
-          }
-        } else {
-          if (currentTime - shiftRequestTime > PULSE_SHIFTDOWN_TIME) {
-            out.clutch = PULSE_CLUTCH_AMPLITUDE;
-            out.shiftUp = 0;
-            out.shiftDown = PULSE_SHIFTDOWN_AMPLITUDE - ((currentTime - shiftRampUpCompleteTime) * PULSE_SHIFTDOWN_AMPLITUDE / PULSE_SHIFTDOWN_TIME);
-            out.throttle = RevMatch(in);
-          } else {
-            currentGear = intermediateGear;
-            if (targetGear != currentGear) {
-              clutchRampUpCompleteTime = currentTime;
-              int diff = targetGear - currentGear;
-              intermediateGear = targetGear + (diff > 0) - (diff < 0);
-              shiftState = SHIFT_SHIFTER_RAMPUP;
-            } else {
-              shiftRampDownCompleteTime = currentTime;
-              shiftState = SHIFT_CLUTCH_RAMPDOWN;
-            }
-          }
-        }
-      }
-      case SHIFT_CLUTCH_RAMPDOWN: { // 4
-        long int currentTime = millis();
-        if (currentTime - shiftRequestTime > PULSE_CLUTCHIN_TIME) {
-          out.clutch = PULSE_CLUTCH_AMPLITUDE - ((currentTime - shiftRequestTime) * PULSE_CLUTCH_AMPLITUDE / PULSE_CLUTCHIN_TIME);
-          out.shiftUp = 0;
-          out.shiftDown = 0;
-          out.throttle = APPSTPSMap::Map(in.TPSAve());
-        } else {
-          if (targetGear != currentGear) {
-            shiftState = SHIFT_CLUTCH_RAMPUP;
-            shiftRequestTime = currentTime;
-          } else {
-            shiftState = SHIFT_IDLE;
-          }
-        }
+  if (in.gear != finalGear) {
+    if (in.gear == targetGear) {
+      if (targetGear < finalGear) {
+        targetGear++;
+      } else if (targetGear > finalGear) {
+        targetGear--;
+      } else {
+        // how
       }
     }
+    if (in.gear < targetGear) {
+      shiftState = SHIFT_UP;
+    } else if (in.gear > targetGear) {
+      shiftState = SHIFT_DOWN;
+    } else {
+      // how
+    }
   } else {
-    out.throttle = APPSTPSMap::Map(in.TPSAve());
-    out.clutch = 0;
-    out.shiftUp = 0;
-    out.shiftDown = 0;
+    shiftState = SHIFT_IDLE;
   }
-
+  switch (shiftState) {
+    case SHIFT_IDLE: {
+        out.shiftUp = 0;
+        out.shiftDown = 0;
+        out.throttle = APPSTPSMap::Map(in.TPSAve());
+      }
+    case SHIFT_UP: {
+        out.shiftUp = SHIFT_SHIFTER_MAX;
+        out.shiftDown = 0;
+        out.throttle = RevMatch(in);
+      }
+    case SHIFT_DOWN: {
+        out.shiftUp = 0;
+        out.shiftDown = SHIFT_SHIFTER_MAX;
+        out.throttle = RevMatch(in);
+      }
+  }
   // RevMatching or no, if RPM is redlining we need to limit it
   if (in.RPM.rate > RPM_RED_LINE) {
     out.throttle = 0.0;
     Serial.println("hi");
   }
-
-  if (sortaEquals(in.TPSAve(),out.throttle) == timers[TIMER_EXPTPS_DIFF].running) {
-//    timers[TIMER_EXPTPS_DIFF].Toggle();
-  }
-  
-  return out;
 }

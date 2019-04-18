@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include "SharedConstants.h"
+
 // Labels for input pins
 #define IN_TPS1 A0
 #define IN_TPS2 A1
@@ -8,11 +10,10 @@
 #define IN_APPS2 A3
 #define IN_BSE1 A4
 #define IN_BSE2 A5
-#define IN_SHIFTUP_PADDLE 8
-#define IN_SHIFTDOWN_PADDLE 9
 #define IN_GEAR_INDICATOR 21
 #define IN_FINAL_DRIVE 18
 #define IN_RPM 3
+#define IN_CLUTCH_BUTTON 49
 
 // Labels for output pins
 #define OUT_SHIFTUP_ACTUATOR 5
@@ -24,16 +25,6 @@
 #define OUT_THROTTLE_CUT 31
 #define OUT_BRAKELIGHT 33
 
-// Labels for communication pins
-#define COM_MISO 50
-#define COM_MOSI 51
-#define COM_SCK 52
-#define COM_INT 2
-#define COM_CAN_CS 53
-#define COM_SD_CS 4
-
-// Required time at low (in ms) before accepting a second shift request
-#define PADDLE_DEAD_TIME 100
 
 #define NO_THROTTLE 0
 #define FULL_THROTTLE 1
@@ -59,18 +50,14 @@
 
 // Shift sequence phases
 #define SHIFT_IDLE 0
-#define SHIFT_CLUTCH_RAMPUP 1
-#define SHIFT_SHIFTER_RAMPUP 2
-#define SHIFT_SHIFTER_RAMPDOWN 3
-#define SHIFT_CLUTCH_RAMPDOWN 4
+#define SHIFT_UP 1
+#define SHIFT_DOWN 2
+
+// Shift parameters
+#define SHIFT_CLUTCH_MAX 4.
+#define SHIFT_SHIFTER_MAX 4.
 
 #define FINAL_DRIVE_RATIO 1.4
 #define RPM_RED_LINE 5000
-
-// Error codes
-#define ERROR_CAN_INITIALIZATION 1
-#define ERROR_SD_INITIALIZATION 2
-#define ERROR_LOG_FILE_NAME_SATURATION 3
-#define ERROR_NO_GEAR_DETECTED 4
 
 #endif

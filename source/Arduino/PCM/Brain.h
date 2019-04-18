@@ -9,13 +9,12 @@
 
 class Brain {
       // for shifting
-      int currentGear;
       int targetGear;
-      int intermediateGear;
-      long int shiftRequestTime;
-      long int clutchRampUpCompleteTime;
-      long int shiftRampUpCompleteTime;
-      long int shiftRampDownCompleteTime;
+      int finalGear;
+//      long int shiftRequestTime;
+//      long int clutchRampUpCompleteTime;
+//      long int shiftRampUpCompleteTime;
+//      long int shiftRampDownCompleteTime;
       int shiftState;
 
       // for keeping track of plausibility failures
@@ -25,13 +24,17 @@ class Brain {
       static const double gearRatios[];
 
       // for simplicity
-      bool IsShifting();
+      inline bool IsShifting();
 
       void ShiftUp();
       void ShiftDown();
 
       // calculates the revmatched TPS output given input wheelspeeds
       double RevMatch(Input);
+
+      void CheckPlausibility(Input,Output&);
+      void ShiftAndThrottle(Input,Output&);
+      
 public:
       // will somehow need to detect which gear its in, then shift to first.
       bool Initialize();

@@ -16,12 +16,11 @@ void printDirectory(File dir, int numTabs);
 void clearDirectory(File dir);
 
 int IO::Initialize() {
-  pinMode(IN_SHIFTUP_PADDLE, INPUT);
-  pinMode(IN_SHIFTDOWN_PADDLE, INPUT);
-  pinMode(IN_RPM, INPUT);
-  pinMode(IN_FINAL_DRIVE, INPUT);
+  pinMode(IN_RPM, INPUT_PULLUP);
+  pinMode(IN_FINAL_DRIVE, INPUT_PULLUP);
   for(int i = 1; i <= 6; i++)
-    pinMode(IN_GEAR_INDICATOR + i, INPUT);
+    pinMode(IN_GEAR_INDICATOR + i, INPUT_PULLUP);
+  pinMode(IN_CLUTCH_BUTTON, INPUT_PULLUP);
 
   pinMode(OUT_SHIFTUP_ACTUATOR, OUTPUT);
   pinMode(OUT_SHIFTDOWN_ACTUATOR, OUTPUT);
@@ -72,28 +71,28 @@ Input IO::ReadInputs() {
       in.APPS2 = analogRead(IN_APPS2);
       in.BSE1 = analogRead(IN_BSE1);
       in.BSE2 = analogRead(IN_BSE2);
+      in.clutchButton = !digitalRead(IN_CLUTCH_BUTTON);
 
-      bool up = digitalRead(IN_SHIFTUP_PADDLE);
-      bool down = digitalRead(IN_SHIFTDOWN_PADDLE);
-      in.paddleUp = false;
-      in.paddleDown = false;
-      if (up) {
-        int diff =  millis() - lastPaddleUpHigh;
-//        Serial.println(diff);
-        lastPaddleUpHigh = millis();
-        if (diff > PADDLE_DEAD_TIME) {
-          in.paddleUp = true;
-        }
-      }
-      if (down) {
-        int diff =  millis() - lastPaddleDownHigh;
-        lastPaddleDownHigh = millis();
-        if (diff > PADDLE_DEAD_TIME) {
-          in.paddleDown = true;
-        }
-      }
+      
       if (canReceived) {
-        
+        canReceived = false;
+        unsigned char buf[16];
+        unsigned char len;
+        unsigned long id;
+        while (CAN_MSGAVAIL == CAN.checkReceive()) 
+        {
+          CAN.readMsgBufID(&id, &len, buf);
+          switch (id) {
+            case 0x0b000000: {
+              Serial.println("shift received");
+              if (buf[0] == 'u') {
+                in.paddleUp = true;
+              } else if(buf[0] == 'd') {
+                in.paddleDown = true;
+              }
+            }
+          }
+        }
       }
       if (Serial.available()) {
         String command = Serial.readString();
@@ -209,4 +208,8 @@ void clearDirectory(File dir) {
     entry.close();
     SD.remove(name);
   }
+}
+
+void IO::SendCANChar(char c, unsigned long id) {
+  CAN.sendMsgBuf(id, 0, 1, &c);
 }

@@ -3,6 +3,7 @@
 #include "Brain.h"
 
 Brain b;
+int i;
 
 void setup() {
   // Initialize everything.

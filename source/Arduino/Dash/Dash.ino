@@ -1,16 +1,37 @@
-#include "Constants.h"
-#include <LiquidCrystal.h>
+#include <global.h>
+#include <Canbus.h>
+#include <mcp2515_defs.h>
+#include <mcp2515.h>
+#include <defaults.h>
 
-LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
+#include "Constants.h"
+#include "IO.h"
+
+int hold = 900;
 
 void setup() {
-  // put your setup code here, to run once:
-  lcd.begin(LCD_COLS,LCD_ROWS);
-  lcd.print("VROOM VROOM");
-  lcd.setCursor(0,1);
-  lcd.print("baby ;)");
+  IO::Initialize();
+//  lcd.begin(LCD_COLS,LCD_ROWS);
+//  delay(100);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+//  IO.sendOutputs(
+//    b.Update(
+//      IO.readInputs()
+//    )
+//  );
+  Output o;
+  o.RPM = 3510;
+  o.seg = hold;
+  o.oilPressure = 60;
+  o.oilTemp = 120;
+  IO::SendOutputs(o);
+  delay(1000);
+  if (millis() % 100 == 0)
+    hold++;
+//  delay(1000);
+  
+//  lcd.setCursor(0,1);
+//  lcd.print("hello world");
 }

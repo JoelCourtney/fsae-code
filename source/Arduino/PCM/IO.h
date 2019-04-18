@@ -20,6 +20,7 @@ struct Input {
   bool paddleUp = false, paddleDown = false;
   PWMTracker finalDrive;
   PWMTracker RPM;
+  bool clutchButton = false;
   int gear = -1;
 
   double TPSAve();
@@ -47,6 +48,8 @@ private:
       static PassThrough pass;
       static unsigned long lastLog;
       static char logName[12];
+
+      static void SendCANChar(char, unsigned long);
 
 public:
       static void CAN_ISR();
