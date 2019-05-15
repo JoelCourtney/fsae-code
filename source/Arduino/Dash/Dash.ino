@@ -11,8 +11,6 @@ int hold = 900;
 
 void setup() {
   IO::Initialize();
-//  lcd.begin(LCD_COLS,LCD_ROWS);
-//  delay(100);
 }
 
 void loop() {

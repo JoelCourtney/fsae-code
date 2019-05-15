@@ -79,6 +79,7 @@ void IO::SendOutputs(Output o) {
 
   if (o.shiftUp || true) {
     SendCANChar('u', 0x0b000002);
+    Serial.println("why");
   }
   if (o.shiftDown) {
     SendCANChar('d', 0x0b000000);
@@ -115,6 +116,53 @@ void IO::SendOutputs(Output o) {
       digitalWrite(SEG_P3, HIGH);
       break;
   }
+ /*
+  * unsigned int masks[] = {
+  0b1,
+  0b10,
+  0b100,
+  0b1000,
+  0b100000000000,
+  0b10000000000,
+  0b1000000000,
+  0b100000000,
+  0b10010000,
+  0b1100000
+};
+  * In setup:
+  * pinMode(latchPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
+
+  Here:
+  *   // count from 0 to 255 and display the number 
+  // on the LEDs
+  unsigned int n = 0;
+  unsigned int mask = 0b11111111;
+  while (true) {
+    // take the latchPin low so 
+    // the LEDs don't change while you're sending in bits:
+    digitalWrite(latchPin, LOW);
+    // shift out the bits:
+    unsigned int numberToDisplay = 0;
+    for (unsigned short int i = 0; i < n; i++) {
+      numberToDisplay |= masks[i];
+    }
+    shiftOut(dataPin, clockPin, MSBFIRST, numberToDisplay >> 8);
+    shiftOut(dataPin, clockPin, MSBFIRST, numberToDisplay & mask);  
+     
+    //take the latch pin high so the LEDs will light up:
+    digitalWrite(latchPin, HIGH);
+    Serial.println(numberToDisplay);
+    // pause before next value:
+    delay(500);
+    if (n >= 10) {
+      n = 0;
+    } else {
+      n += 1;
+    }
+  }
+  */
 }
 
 void IO::SendCANChar(char c, unsigned long id) {
