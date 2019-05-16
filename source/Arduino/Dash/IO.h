@@ -23,13 +23,10 @@ class IO {
 private:
       static int plexIndex;
       
-      static unsigned long lastPaddleUpHigh;
-      static unsigned long lastPaddleDownHigh;
+      
 
       static unsigned long lastLog;
       static char logName[12];
-
-      static LiquidCrystal lcd;
 
       static void SendCANChar(char, unsigned long);
 public:

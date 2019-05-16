@@ -14,7 +14,6 @@ unsigned long IO::lastPaddleUpHigh = 0;
 unsigned long IO::lastPaddleDownHigh = 0;
 unsigned long IO::lastLog = 0;
 char IO::logName[12];
-LiquidCrystal IO::lcd = LiquidCrystal(LCD_RS, LCD_RW, LCD_EN, LCD_D0, LCD_D1, LCD_D2, LCD_D3, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 void printDirectory(File dir, int numTabs);
 void clearDirectory(File dir);
@@ -35,11 +34,6 @@ int IO::Initialize() {
 //  pinMode(SEG_P1, OUTPUT);
 //  pinMode(SEG_P2, OUTPUT);
 //  pinMode(SEG_P3, OUTPUT);
-
-  if (Canbus.init(CANSPEED_500)) //Initialise MCP2515 CAN controller at the specified speed
-    Serial.println("CAN Init ok");
-  else
-    Serial.println("Can't init CAN");
 
   return 0;
 }
@@ -74,7 +68,7 @@ void IO::SendOutputs(Output o) {
   String rpm = String(((double)round(o.RPM / 100)) / 10);
   rpm.remove(rpm.length() - 1, 1);
   String pressure = String(round(o.oilPressure));
-  //  lcd.print("RPM:" + String(rpm) + " OPRS:" + pressure);
+  //  
   lcd.setCursor(0, 1);
 
   if (o.shiftUp || true) {
@@ -85,37 +79,7 @@ void IO::SendOutputs(Output o) {
     SendCANChar('d', 0x0b000000);
   }
 
-  plexIndex = (plexIndex + 1) % 4;
-  digitalWrite(SEG_P0, LOW);
-  digitalWrite(SEG_P1, LOW);
-  digitalWrite(SEG_P2, LOW);
-  digitalWrite(SEG_P3, LOW);
-
-  int mod = 10;
-  for (int i = 0; i < plexIndex; i++) {
-    mod *= 10;
-  }
-  unsigned digit = o.seg % mod / (mod / 10);
-  digitalWrite(SEG_A, digit & 1);
-  digitalWrite(SEG_B, digit & 2);
-  digitalWrite(SEG_C, digit & 4);
-  digitalWrite(SEG_D, digit & 8);
-
-
-  switch (plexIndex) {
-    case 0:
-      digitalWrite(SEG_P0, HIGH);
-      break;
-    case 1:
-      digitalWrite(SEG_P1, HIGH);
-      break;
-    case 2:
-      digitalWrite(SEG_P2, HIGH);
-      break;
-    case 3:
-      digitalWrite(SEG_P3, HIGH);
-      break;
-  }
+  
  /*
   * unsigned int masks[] = {
   0b1,
@@ -163,15 +127,4 @@ void IO::SendOutputs(Output o) {
     }
   }
   */
-}
-
-void IO::SendCANChar(char c, unsigned long id) {
-  tCAN message;
-  message.id = id; //formatted in HEX
-  message.header.rtr = 0;
-  message.header.length = 1; //formatted in DEC
-  message.data[0] = c;
-
-  mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
-  mcp2515_send_message(&message);
 }
