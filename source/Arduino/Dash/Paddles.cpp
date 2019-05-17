@@ -1,14 +1,19 @@
 #include "Paddles.h"
 #include "Constants.h"
+#include <Arduino.h>
 
-void Paddles::Initialize() {
-  // output pins
+bool Paddles::active = false;
+
+void Paddles::initialize() {
+  pinMode(IN_SHIFTUP_PADDLE, INPUT);
+  pinMode(IN_SHIFTDOWN_PADDLE, INPUT);
+  active = true; // no way to tell if failed.
 }
 
-bool Paddles::ReadUp() {
+bool Paddles::readUp() {
   bool up = digitalRead(IN_SHIFTUP_PADDLE);
-  if (up)
-    int diff =  millis() - lastUp;
+  if (up) {
+    int diff = millis() - lastUp;
     lastUp = millis();
     if (diff < PADDLE_DEAD_TIME) {
       up = false;
@@ -17,9 +22,9 @@ bool Paddles::ReadUp() {
   return up;
 }
 
-bool Paddles::ReadDown() {
+bool Paddles::readDown() {
   bool down = digitalRead(IN_SHIFTUP_PADDLE);
-  if (down)
+  if (down) {
     int diff =  millis() - lastDown;
     lastDown = millis();
     if (diff < PADDLE_DEAD_TIME) {
@@ -27,4 +32,8 @@ bool Paddles::ReadDown() {
     }
   }
   return down;
+}
+
+bool Paddles::isActive() {
+  return active;
 }

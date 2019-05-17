@@ -27,6 +27,7 @@
 #define SEG_P1 42
 #define SEG_P2 44
 #define SEG_P3 46
+#define SEG_P4 47
 
 // Input pins
 #define IN_SHIFTUP_PADDLE 8
@@ -34,5 +35,16 @@
 
 // Required time at low (in ms) before accepting a second shift request
 #define PADDLE_DEAD_TIME 100
+
+// LED Shift lights
+#define LED_LATCH 30
+#define LED_CLOCK 31
+#define LED_DATA 32
+
+#define SPI_SCK 52
+#define SPI_MISO 50
+#define SPI_MOSI 51
+#define SPI_CAN_CS 53
+#define SPI_SD_CS 9
 
 #endif

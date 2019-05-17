@@ -3,9 +3,14 @@
 
 class Seg {
   static unsigned short int plex;
+
+  static bool active;
+  
 public:
-  static void Initialize();
-  static void Write(unsigned int n);
+  static void initialize();
+  static void write(unsigned int n);
+
+  static bool isActive();
 };
 
 #endif

@@ -1,11 +1,19 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <Arduino.h>
+
 class Log {
-  public:
-  static void Initialize();
-  static void PrintRoot();
-  static void ClearRoot();
-}
+  static String fileName;
+
+  static bool active;
+  
+public:
+  static void initialize();
+
+  static void write(String data);
+
+  static bool isActive();
+};
 
 #endif

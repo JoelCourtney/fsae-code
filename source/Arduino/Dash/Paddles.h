@@ -4,10 +4,15 @@
 class Paddles {
   static unsigned long lastUp;
   static unsigned long lastDown;
+
+  static bool active;
+  
 public:
-  static void Initialize();
-  static bool ReadUp();
-  static bool ReadDown();
-}
+  static void initialize();
+  static bool readUp();
+  static bool readDown();
+
+  static bool isActive();
+};
 
 #endif

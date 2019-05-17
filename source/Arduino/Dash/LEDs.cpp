@@ -1,4 +1,6 @@
 #include "LEDs.h"
+#include "Constants.h"
+#include <Arduino.h>
 
 unsigned int LEDs::masks[] = {
   0b1,
@@ -11,32 +13,37 @@ unsigned int LEDs::masks[] = {
   0b100000000,
   0b10010000,
   0b1100000
+};
+
+unsigned int LEDs::lastState = 30001;
+
+bool LEDs::active = false;
+
+void LEDs::initialize() {
+  pinMode(LED_LATCH, OUTPUT);
+  pinMode(LED_CLOCK, OUTPUT);
+  pinMode(LED_DATA, OUTPUT);
+  active = true; // no way to tell if failed
 }
 
-unsigned int LEDs::lastState = 1000;
-
-void LEDs::Initialize() {
-  /*
-   *  pinMode(latchPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
-  pinMode(dataPin, OUTPUT);
-   */
-}
-
-void LEDs::Write(unsigned int RPM) {
+void LEDs::write(unsigned int RPM) {
   unsigned int state = 2;
   if (state != lastState) {
     lastState = state;
-    digitalWrite(latchPin, LOW);
+    digitalWrite(LED_LATCH, LOW);
     // shift out the bits:
     unsigned int bits = 0;
     for (unsigned short int i = 0; i < state; i++) {
       bits |= masks[i];
     }
-    shiftOut(dataPin, clockPin, MSBFIRST, bits >> 8);
-    shiftOut(dataPin, clockPin, MSBFIRST, bits & mask);  
+    shiftOut(LED_DATA, LED_CLOCK, MSBFIRST, bits >> 8);
+    shiftOut(LED_DATA, LED_CLOCK, MSBFIRST, bits);  
      
     //take the latch pin high so the LEDs will light up:
-    digitalWrite(latchPin, HIGH);
+    digitalWrite(LED_LATCH, HIGH);
   }
+}
+
+bool LEDs::areActive() {
+  return active;
 }

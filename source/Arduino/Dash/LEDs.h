@@ -4,10 +4,14 @@
 class LEDs {
   static unsigned int masks[];
   static unsigned int lastState;
+
+  static bool active;
   
 public:
-  static void Initialize();
-  static void Write(unsigned int RPM);
-}
+  static void initialize();
+  static void write(unsigned int RPM);
+
+  static bool areActive();
+};
 
 #endif

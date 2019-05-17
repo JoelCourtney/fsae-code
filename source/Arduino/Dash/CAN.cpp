@@ -1,4 +1,5 @@
 #include "CAN.h"
+#include "Error.h"
 
 #include <Canbus.h>
 #include <defaults.h>
@@ -7,14 +8,18 @@
 #include <mcp2515_defs.h>
 #include <Arduino.h>
 
-void CAN::Initialize() {
+bool CAN::active = false;
+
+void CAN::initialize() {
   if (Canbus.init(CANSPEED_500)) //Initialise MCP2515 CAN controller at the specified speed
     Serial.println("CAN Init ok");
-  else
-    Serial.println("Can't init CAN");
+  else {
+    Error::fatalError("Can't init CAN");
+  }
+  active = true;
 }
 
-void CAN::SendChar(char c, unsigned long id) {
+void CAN::sendChar(char c, unsigned long id) {
   tCAN message;
   message.id = id; //formatted in HEX
   message.header.rtr = 0;
@@ -23,4 +28,8 @@ void CAN::SendChar(char c, unsigned long id) {
 
   mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
   mcp2515_send_message(&message);
+}
+
+bool CAN::isActive() {
+  return active;
 }

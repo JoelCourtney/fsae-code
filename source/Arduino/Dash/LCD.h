@@ -5,10 +5,14 @@
 
 class LCD {
   static LiquidCrystal lcd;
+
+  static bool active;
   
 public:
-  static void Initialize();
-  static void Write(String s);
+  static void initialize();
+  static void write(String s);
+
+  static bool isActive();
 };
 
 #endif
