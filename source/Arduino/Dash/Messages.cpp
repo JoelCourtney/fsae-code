@@ -1,25 +1,42 @@
 #include "Messages.h"
 
-RPM_TPS::RPM_TPS(RawMessage m) {
-  rpm = m.data[1] * 256 + m.data[0];
-  
-  int tpsHold = m.data[3] * 256 + m.data[2];
-  if (tpsHold > 32767)
-    tpsHold -= 65536;
-  tps = tpsHold * 0.1;
-
-  int fuelOpenTimeHold = m.data[5] * 256 + m.data[4];
-  if (fuelOpenTimeHold > 32767)
-    fuelOpenTimeHold -= 65536;
-  fuelOpenTime = fuelOpenTimeHold * 0.1;
-
-  int ignitionAngleHold = m.data[7] * 256 + m.data[6];
-  if (ignitionAngleHold > 32767)
-    ignitionAngleHold -= 65536;
-  ignitionAngle = ignitionAngleHold * 0.1;
+float signedBytesToFloat(byte low, byte high, float res) {
+  int hold = high*256 + low;
+  if (hold > 32767)
+    hold -= 65536;
+  return hold * res;
 }
 
-RawMessage RPM_TPS::toRaw() const {
+unsigned int bytesToInt(byte low, byte high) {
+  return high*256 + low;
+}
+
+PEOne::PEOne(RawMessage m) {
+  rpm = bytesToInt(m.data[0], m.data[1]);
+  
+  tps = signedBytesToFloat(m.data[2], m.data[3], 0.1);
+  
+  fuelOpenTime = signedBytesToFloat(m.data[4], m.data[5], 0.1);
+
+  ignitionAngle = signedBytesToFloat(m.data[6], m.data[7], 0.1);
+}
+
+RawMessage PEOne::toRaw() const {
   // This will never be called.
   return RawMessage();
+}
+
+unsigned long int PEOne::getID() const {
+  return 0x0cfff048;
+}
+
+ShiftMessage::ShiftMessage(RawMessage m) {
+  dir = m.data[0];
+}
+
+RawMessage ShiftMessage::toRaw() const {
+  RawMessage m;
+  m.id = 0xb0001000;
+  m.data[0] = dir;
+  return m;
 }

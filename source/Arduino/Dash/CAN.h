@@ -8,7 +8,7 @@ class CAN {
 public:
   static void initialize();
   static void sendChar(char c, unsigned long id);
-  static void write(RawMessage m, unsigned long id);
+  static void write(Message* m);
   static bool isActive();
 };
 
