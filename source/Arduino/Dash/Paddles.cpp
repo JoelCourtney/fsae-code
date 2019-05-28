@@ -4,6 +4,9 @@
 
 bool Paddles::active = false;
 
+unsigned long Paddles::lastUp = -PADDLE_DEAD_TIME;
+unsigned long Paddles::lastDown = -PADDLE_DEAD_TIME;
+
 void Paddles::initialize() {
   pinMode(IN_SHIFTUP_PADDLE, INPUT);
   pinMode(IN_SHIFTDOWN_PADDLE, INPUT);

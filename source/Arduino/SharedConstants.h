@@ -17,4 +17,8 @@
 #define COM_CAN_CS 53
 #define COM_SD_CS 4
 
+// CAN IDs
+#define CAN_SHIFT_ID 0xb0001000&0b11111111111
+#define CAN_PE1_ID 0x0CFFF048&0b11111111111
+
 #endif

@@ -7,8 +7,9 @@ class CAN {
   static bool active;
 public:
   static void initialize();
-  static void sendChar(char c, unsigned long id);
+//  static void sendChar(char c, unsigned long id);
   static void write(Message* m);
+  static RawMessage read();
   static bool isActive();
 };
 

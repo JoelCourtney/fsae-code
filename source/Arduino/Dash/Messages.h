@@ -3,15 +3,18 @@
 
 #include <Arduino.h>
 
+struct Message;
+
 struct RawMessage {
-  unsigned long int id;
-  unsigned short int len = 0;
+  unsigned short int id;
+  unsigned short int length = 0;
   byte data[8];
+
+  static RawMessage none();
 };
 
 struct Message {
   virtual RawMessage toRaw() const = 0;
-  virtual unsigned long int getID() const = 0;
 };
 
 struct ShiftMessage : Message {
@@ -21,7 +24,6 @@ struct ShiftMessage : Message {
   explicit ShiftMessage(RawMessage);
 
   RawMessage toRaw() const override;
-  unsigned long int getID() const override;
 };
 
 struct PEOne : Message {
@@ -34,7 +36,6 @@ struct PEOne : Message {
   explicit PEOne(RawMessage);
   
   RawMessage toRaw() const override;
-  unsigned long int getID() const override;
 };
 
 #endif

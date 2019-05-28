@@ -19,11 +19,12 @@ void Seg::initialize() {
 }
 
 void Seg::write(unsigned int n) {
-  plex = (plex + 1) % 4;
+  plex = (plex + 1) % 5;
   digitalWrite(SEG_P0, LOW);
   digitalWrite(SEG_P1, LOW);
   digitalWrite(SEG_P2, LOW);
   digitalWrite(SEG_P3, LOW);
+  digitalWrite(SEG_P4, LOW);
 
   int mod = 10;
   for (int i = 0; i < plex; i++) {
@@ -48,6 +49,9 @@ void Seg::write(unsigned int n) {
       break;
     case 3:
       digitalWrite(SEG_P3, HIGH);
+      break;
+    case 4:
+      digitalWrite(SEG_P4, HIGH);
       break;
   }
 }
