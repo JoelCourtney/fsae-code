@@ -19,4 +19,6 @@ public:
 
   static bool isActive();
   static bool isShifting();
-}
+};
+
+#endif

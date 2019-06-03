@@ -3,15 +3,16 @@
 
 Timer::Timer() {
       running = false;
+      name = "";
 }
 
-void Timer::Toggle() {
+void Timer::toggle() {
       running = !running;
       if (running) {
             start = millis();
       }
 }
 
-int Timer::GetDuration() {
+int Timer::getDuration() {
       return millis() - start;
 }

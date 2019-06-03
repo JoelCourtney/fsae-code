@@ -1,5 +1,6 @@
 #include "Clutch.h"
 #include "Constants.h"
+#include <Arduino.h>
 
 bool Clutch::active = false;
 bool Clutch::out = false;
@@ -15,9 +16,8 @@ void Clutch::write(bool _out) {
 
 void Clutch::update() {
   static float state = 0.0;
-  if (
 }
 
-void Clutch::isActive() {
+bool Clutch::isActive() {
   return active;
 }

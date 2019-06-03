@@ -1,5 +1,6 @@
 #include "Shifter.h"
 #include "Constants.h"
+#include <Arduino.h>
 
 bool Shifter::active = false;
 short int Shifter::currentGear = -1;
@@ -40,11 +41,11 @@ void Shifter::update() {
   readGear();
   if (targetGear > currentGear && state != 1) {
     analogWrite(OUT_SHIFTDOWN_ACTUATOR, 0);
-    analogWrite(OUT_SHIFTUP_ACTUATOR, SHIFT_SHIFTUP_MAX);
+    analogWrite(OUT_SHIFTUP_ACTUATOR, SHIFT_SHIFTER_MAX);
     state = 1;
   } else if (targetGear < currentGear && state != -1) {
     analogWrite(OUT_SHIFTUP_ACTUATOR, 0);
-    analogWrite(OUT_SHIFTDOWN_ACTUATOR, SHIFT_SHIFTUP_MAX);
+    analogWrite(OUT_SHIFTDOWN_ACTUATOR, SHIFT_SHIFTER_MAX);
     state = 0;
   } else if (state != 0) {
     analogWrite(OUT_SHIFTUP_ACTUATOR, 0);

@@ -6,11 +6,12 @@
 struct Timer {
       unsigned long start = millis();
       bool running = false;
+      String name;
       
       Timer();
       
-      void Toggle();
-      int GetDuration();
+      void toggle();
+      int getDuration();
 };
 
 #endif
