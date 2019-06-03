@@ -8,8 +8,7 @@
 #define IN_TPS2 A1
 #define IN_APPS1 A2
 #define IN_APPS2 A3
-#define IN_BSE1 A4
-#define IN_BSE2 A5
+#define IN_BSE A4
 #define IN_GEAR_INDICATOR 21
 #define IN_FINAL_DRIVE 18
 #define IN_RPM 3
@@ -46,7 +45,7 @@
 #define PULSE_CLUTCHIN_TIME 100.
 #define PULSE_CLUTCH_AMPLITUDE 1.
 
-#define TOP_GEAR 4
+#define TOP_GEAR 6
 
 // Shift sequence phases
 #define SHIFT_IDLE 0
@@ -56,6 +55,8 @@
 // Shift parameters
 #define SHIFT_CLUTCH_MAX 4.
 #define SHIFT_SHIFTER_MAX 4.
+#define SHIFT_RAMPUP_LOWPASS 0.8
+#define CLUTCH_RAMPUP_LOWPASS 0.8
 
 #define FINAL_DRIVE_RATIO 1.4
 #define RPM_RED_LINE 5000

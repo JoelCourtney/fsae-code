@@ -122,13 +122,7 @@ Input IO::ReadInputs() {
           SD.remove(file);
         }
       }
-      in.gear = -1;
-      for (int i = 1; i <= 6; i++) {
-        if (digitalRead(IN_GEAR_INDICATOR + i)) {
-          in.gear = i;
-          break;
-        }
-      }
+      
       if (in.gear == -1) {
         // something about error ERROR_NO_GEAR_DETECTED
       }
