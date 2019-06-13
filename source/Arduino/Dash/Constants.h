@@ -4,17 +4,17 @@
 #include "SharedConstants.h"
 
 // Pins for LCD screen
-#define LCD_RS 32
-#define LCD_RW 33
-#define LCD_EN 31
-#define LCD_D0 22
-#define LCD_D1 23
-#define LCD_D2 24
-#define LCD_D3 25
-#define LCD_D4 26
-#define LCD_D5 27
-#define LCD_D6 28
-#define LCD_D7 29
+#define LCD_RS 7
+#define LCD_RW 8
+#define LCD_EN 43
+#define LCD_D0 44
+#define LCD_D1 45
+#define LCD_D2 46
+#define LCD_D3 16
+#define LCD_D4 17
+#define LCD_D5 18
+#define LCD_D6 19
+#define LCD_D7 20
 #define LCD_COLS 16
 #define LCD_ROWS 2
 

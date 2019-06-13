@@ -21,9 +21,9 @@ void setup() {
   wdt_disable();
 //  Serial.begin(115200);
 //  Serial.println("Hello. Am Dash.");
-//  LCD::initialize(); 
-//  LEDs::initialize();
-//  Seg::initialize();
+  LCD::initialize(); 
+  LEDs::initialize();
+  Seg::initialize();
 //  CAN::initialize();
 //  Log::initialize();
 //  Paddles::initialize();
@@ -48,15 +48,15 @@ void loop() {
 //    CAN::write(&m);
 //  }
 
-//  LEDs::write(rpm);
+  LEDs::write(1000);
 
 //  Seg::write(rpm*10+gear);
-//Seg::write(12345);
+Seg::write(33333);
 
 //  if (Error::isWarning()) {
 //    Error::warn();
 //  } else {
-//    
+      LCD::write("hello world");
 //  }
 }
 
