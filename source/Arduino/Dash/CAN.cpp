@@ -15,9 +15,9 @@ unsigned short int trim_id(unsigned short int id) {
 bool CAN::active = false;
 
 void CAN::initialize() {
-  if (Canbus.init(CANSPEED_500)) //Initialise MCP2515 CAN controller at the specified speed
-    Serial.println("CAN Init ok");
-  else {
+  if (Canbus.init(CANSPEED_500)) { //Initialise MCP2515 CAN controller at the specified speed
+//    Serial.println("CAN Init ok");
+  } else {
     Error::fatalError("Can't init CAN");
   }
   active = true;

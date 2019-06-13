@@ -19,15 +19,15 @@
 #define LCD_ROWS 2
 
 // Pins for 7Seg
-#define SEG_A 41
-#define SEG_B 43
-#define SEG_C 45
-#define SEG_D 47
-#define SEG_P0 40
-#define SEG_P1 42
-#define SEG_P2 44
-#define SEG_P3 46
-#define SEG_P4 47
+#define OUT_DECODER_A 15
+#define OUT_DECODER_B 14
+#define OUT_DECODER_C 0
+#define OUT_DECODER_D 1
+#define OUT_DIGIT_1 40
+#define OUT_DIGIT_2 42
+#define OUT_DIGIT_3 44
+#define OUT_DIGIT_4 46
+#define OUT_DIGIT_5 47
 
 // Input pins
 #define IN_SHIFTUP_PADDLE 8

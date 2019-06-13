@@ -27,7 +27,7 @@ void Log::initialize() {
     String header = "header";
     file.println(header);
     file.close();
-    Serial.println(header);
+//    Serial.println(header);
     active = true;
   } else {
     Error::fatalError("Cant open log file");
@@ -39,7 +39,7 @@ void Log::write(String data) {
   if (file) {
     file.println(data);
     file.close();
-    Serial.println(data);
+//    Serial.println(data);
   } else {
     Error::warning("Cant open log file");
   }

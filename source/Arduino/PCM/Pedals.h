@@ -4,8 +4,11 @@
 class Pedals {
   static bool active;
 
-  static float apps1, apps2;
+  static short apps1, apps2;
   static float bse;
+
+  static short apps1Raw, apps2Raw;
+  static short bseRaw;
   
 public:
   static void initialize();
@@ -13,6 +16,9 @@ public:
   
   static float readAPPS();
   static float readBSE();
+
+  static short int readAPPSRaw();
+  static short int readBSERaw();
 
   static float appsDiff();
 

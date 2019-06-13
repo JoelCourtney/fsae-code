@@ -23,11 +23,11 @@ void Error::fatalError(String message) {
   if (Seg::isActive()) {
     while (true) {
       Seg::write(88888);
-      Serial.println(message);
+//      Serial.println(message);
     }
   } else {
     while (true) {
-      Serial.println(message);
+//      Serial.println(message);
     }
   }
 }
@@ -46,7 +46,7 @@ void Error::warn() {
   }
   if (LCD::isActive()) {
     LCD::write(warningMessage);
-    Serial.println(warningMessage);
+//    Serial.println(warningMessage);
   }
 }
 
