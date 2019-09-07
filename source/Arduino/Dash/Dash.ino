@@ -24,34 +24,33 @@ void setup() {
   LCD::initialize(); 
   LEDs::initialize();
   Seg::initialize();
-//  CAN::initialize();
-//  Log::initialize();
-//  Paddles::initialize();
+  CAN::initialize();
+  Log::initialize();
+  Paddles::initialize();
 }
 
 void loop() {
 //  // Read CAN messages
-//  RawMessage rm = CAN::read();
-//  parseCAN(rm);
+  RawMessage rm = CAN::read();
+  parseCAN(rm);
 //  
 //  // Read paddles and send shift messages
-//  up = Paddles::readUp();
-//  down = Paddles::readDown();
-//  if (up) {
-//    ShiftMessage m;
-//    m.dir = 'u';
-//    CAN::write(&m);
-//  }
-//  if (down) {
-//    ShiftMessage m;
-//    m.dir = 'd';
-//    CAN::write(&m);
-//  }
+  up = Paddles::readUp();
+  down = Paddles::readDown();
+  if (up) {
+    ShiftMessage m;
+    m.dir = 'u';
+    CAN::write(&m);
+  }
+  if (down) {
+    ShiftMessage m;
+    m.dir = 'd';
+    CAN::write(&m);
+  }
 
   LEDs::write(1000);
 
-//  Seg::write(rpm*10+gear);
-Seg::write(33333);
+  Seg::write(rpm*10+gear);
 
 //  if (Error::isWarning()) {
 //    Error::warn();

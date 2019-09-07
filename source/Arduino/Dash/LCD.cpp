@@ -14,6 +14,7 @@ void LCD::initialize() {
 void LCD::write(String s) {
   lcd.setCursor(0,0);
   lcd.print(s);
+  lcd.setCursor(2, 0);
 }
 
 bool LCD::isActive() {

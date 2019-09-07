@@ -4,7 +4,7 @@
 class Pedals {
   static bool active;
 
-  static short apps1, apps2;
+  static float apps1, apps2;
   static float bse;
 
   static short apps1Raw, apps2Raw;

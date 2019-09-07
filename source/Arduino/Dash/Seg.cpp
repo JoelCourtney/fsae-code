@@ -26,16 +26,16 @@ void Seg::write(unsigned int n) {
   digitalWrite(OUT_DIGIT_4, LOW);
   digitalWrite(OUT_DIGIT_5, LOW);
 
-  int mod = 10;
+  int mod = 1;
   for (int i = 0; i < plex; i++) {
     mod *= 10;
   }
-  unsigned digit = n % mod / (mod / 10);
+  unsigned int digit = (n / mod) % 10;
   digitalWrite(OUT_DECODER_A, digit & 1);
   digitalWrite(OUT_DECODER_B, digit & 2);
   digitalWrite(OUT_DECODER_C, digit & 4);
   digitalWrite(OUT_DECODER_D, digit & 8);
-
+  
   switch (plex) {
     case 0:
       digitalWrite(OUT_DIGIT_1, HIGH);

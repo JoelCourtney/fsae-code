@@ -23,11 +23,11 @@
 #define OUT_DECODER_B 14
 #define OUT_DECODER_C 0
 #define OUT_DECODER_D 1
-#define OUT_DIGIT_1 40
-#define OUT_DIGIT_2 42
-#define OUT_DIGIT_3 44
-#define OUT_DIGIT_4 46
-#define OUT_DIGIT_5 47
+#define OUT_DIGIT_1 3
+#define OUT_DIGIT_2 4
+#define OUT_DIGIT_3 5
+#define OUT_DIGIT_4 6
+#define OUT_DIGIT_5 21
 
 // Input pins
 #define IN_SHIFTUP_PADDLE 8
@@ -37,9 +37,9 @@
 #define PADDLE_DEAD_TIME 100
 
 // LED Shift lights
-#define LED_LATCH 30
-#define LED_CLOCK 31
-#define LED_DATA 32
+#define LED_LATCH 49
+#define LED_CLOCK 47
+#define LED_DATA 48
 
 #define SPI_SCK 52
 #define SPI_MISO 50
